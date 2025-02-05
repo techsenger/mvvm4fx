@@ -17,6 +17,8 @@
 package com.techsenger.mvvm4fx.sampler;
 
 import com.techsenger.mvvm4fx.core.AbstractParentView;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.BooleanProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -101,9 +103,12 @@ public class PersonView extends AbstractParentView<PersonViewModel> {
         super.bind(viewModel);
         stage.titleProperty().bind(viewModel.titleProperty());
         firstNameTextField.textProperty().bindBidirectional(viewModel.getPerson().firstNameProperty());
+        bindValid(firstNameTextField, viewModel.firstNameValidProperty());
         lastNameTextField.textProperty().bindBidirectional(viewModel.getPerson().lastNameProperty());
+        bindValid(lastNameTextField, viewModel.lastNameValidProperty());
         ageTextField.textProperty().bindBidirectional(viewModel.getPerson().ageProperty(),
                 new IntegerStringConverter());
+        bindValid(ageTextField, viewModel.ageValidProperty());
     }
 
     @Override
@@ -116,5 +121,11 @@ public class PersonView extends AbstractParentView<PersonViewModel> {
     protected void postInitialize(PersonViewModel viewModel) {
         super.postInitialize(viewModel);
         stage.show();
+    }
+
+    private void bindValid(TextField textField, BooleanProperty validProperty) {
+        textField.styleProperty().bind(Bindings.when(validProperty)
+                .then("")
+                .otherwise("-fx-background-color: red, white; -fx-background-insets: 0, 1"));
     }
 }

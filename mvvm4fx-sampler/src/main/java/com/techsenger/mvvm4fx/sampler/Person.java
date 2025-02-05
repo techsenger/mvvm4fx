@@ -55,6 +55,10 @@ public class Person {
         this.firstName.set(firstName);
     }
 
+    public boolean isFirstNameValid() {
+        return firstName.get() != null && !firstName.get().isBlank();
+    }
+
     public StringProperty lastNameProperty() {
         return lastName;
     }
@@ -67,6 +71,10 @@ public class Person {
         this.lastName.set(lastName);
     }
 
+    public boolean isLastNameValid() {
+        return lastName.get() != null && !lastName.get().isBlank();
+    }
+
     public ObjectProperty<Integer> ageProperty() {
         return age;
     }
@@ -77,5 +85,9 @@ public class Person {
 
     public void setAge(Integer age) {
         this.age.set(age);
+    }
+
+    public boolean isAgeValid() {
+        return age.get() != null && age.get() >= 0 && age.get() <= 125;
     }
 }
