@@ -41,6 +41,10 @@
         </developer>
     </developers>
 
+    <properties>
+        <publishing.plugin.exclusions>mvvm4fx-sampler</publishing.plugin.exclusions>
+    </properties>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -50,11 +54,18 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+
+            <dependency>
+                <groupId>com.techsenger.mvvm4fx</groupId>
+                <artifactId>mvvm4fx-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
     <modules>
         <module>mvvm4fx-core</module>
+        <module>mvvm4fx-sampler</module>
     </modules>
 </project>
 
