@@ -17,11 +17,23 @@
 package com.techsenger.mvvm4fx.core;
 
 /**
- * When ParentViewModel needs to add/remove any child component (tabs, panes, dialogs etc) then it must use this
- * component helper. Component helper is created in a view and has a reference to the view.
+ * This interface is used by the ParentViewModel to add or remove child components (such as tabs, panes, dialogs, etc.).
+ * It provides a helper for managing these components. The component helper is created in the View and has a reference
+ * to the View, but it does not provide a direct reference to the ViewModel.
+ *
+ * <p>For example, to show a dialog, the helper implementation can include a method like the following:</p>
+ *
+ * <pre>
+ * void openDialog(DialogViewModel dialogViewModel) {
+ *     //alternatively, this logic can be handled within the View itself
+ *     DialogView dialogView = new DialogView(dialogViewModel);
+ *     dialogView.initialize();
+ *     getView().openDialog(dialogView);
+ * }
+ * </pre>
  *
  * @author Pavel Castornii
  */
-public interface ComponentHelper<T extends ParentView<?>> {
+ public interface ComponentHelper<T extends ParentView<?>> {
 
 }
