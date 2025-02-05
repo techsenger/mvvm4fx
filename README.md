@@ -34,10 +34,10 @@ Key features include:
 
 * Support for the component lifecycle.
 * Organization of core tasks in the view.
-* Inheritance of components without limitations.
+* Inheritance of components.
 * Ability to preserve component history.
-* Detailed documentation and a sampler.
 * Designed without considering FXML support.
+* Detailed documentation and a sampler.
 
 # MVVM <a name="mvvm"></a>
 
