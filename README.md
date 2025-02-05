@@ -33,11 +33,11 @@ If you like this project and find it useful, please consider [supporting us](#su
 Key features include:
 
 * Support for the component lifecycle.
-* Organization of core tasks in the view.
-* Inheritance of components.
+* Organization of core tasks within the view.
+* Component inheritance.
 * Ability to preserve component history.
 * Designed without considering FXML support.
-* Detailed documentation and a sampler.
+* Detailed documentation and sample code.
 
 # MVVM <a name="mvvm"></a>
 
