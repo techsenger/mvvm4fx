@@ -15,7 +15,6 @@
  */
 
 module com.techsenger.mvvm4fx.core {
-    requires com.techsenger.toolkit.core;
     requires org.slf4j;
     requires javafx.base;
     requires javafx.graphics;

@@ -14,16 +14,24 @@
  * limitations under the License.
  */
 
-package com.techsenger.mvvm4fx.core;
+package com.techsenger.mvvm4fx.sampler;
+
+import com.techsenger.mvvm4fx.core.ComponentKey;
 
 /**
- * Keys are used to identify components. Component keys should be located in the API and be accessible to other
- * components. At the same time, the component itself can be deeply hidden in the implementation packages.
- *
- * <p>Classes implementing this interface should override toString with a meaningful representation.
  *
  * @author Pavel Castornii
  */
-public interface ComponentKey {
+public class DemoKey implements ComponentKey {
 
+    private final String name;
+
+    public DemoKey(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public String toString() {
+        return name;
+    }
 }

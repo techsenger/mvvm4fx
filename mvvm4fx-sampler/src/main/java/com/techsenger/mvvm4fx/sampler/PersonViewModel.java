@@ -51,7 +51,7 @@ public class PersonViewModel extends AbstractParentViewModel {
 
     @Override
     public ComponentKey getKey() {
-        return ComponentKeys.PERSON;
+        return DemoKeys.PERSON;
     }
 
     ObservableList<Person> getPersons() {

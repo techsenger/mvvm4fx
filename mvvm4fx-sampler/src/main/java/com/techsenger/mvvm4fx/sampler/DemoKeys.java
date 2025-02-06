@@ -19,16 +19,14 @@ package com.techsenger.mvvm4fx.sampler;
 import com.techsenger.mvvm4fx.core.ComponentKey;
 
 /**
- * Component keys should be located in the API and be accessible to other components. At the same time, the
- * component itself can be deeply hidden in the implementation packages.
  *
  * @author Pavel Castornii
  */
-public final class ComponentKeys {
+public final class DemoKeys {
 
-    public static final ComponentKey PERSON = new ComponentKey("Person component");
+    public static final ComponentKey PERSON = new DemoKey("Person component");
 
-    private ComponentKeys() {
+    private DemoKeys() {
         //empty
     }
 }
