@@ -57,15 +57,14 @@ business logic. Model can include:
 
 View — represents the user interface that displays the data. The View's task is to contain UI elements and bind their
 state to the ViewModel. View is responsible for displaying data and interacting with the user, but it should not
-contain logic for managing the state of these elements. All state and control management logic (such as buttons, input
-fields, etc.) are handled by the ViewModel. For example, if the ViewModel indicates that a button should be active or
-inactive, the View will update its state, but it will not manage the logic that determines when the button should be
-enabled or disabled. ViewModel controls this state without knowing about specific controls in the View.
+contain logic for managing the state of these elements. Because it is the responsibility of the ViewModel to control
+this state without knowing about specific controls in the View. For example, if the ViewModel indicates that a button
+should be active or inactive, the View will update the control, but the View will not manage the logic that determines
+when the button should be enabled or disabled.
 
-ViewModel — manages the state of UI elements by providing data about how these elements should behave, without needing
-to know the implementation details of the user interface. ViewModel can also serve as a layer between the View and
-Model, obtaining data from the Model and preparing it for display in the View. It can transform the data from the model
-into a format suitable for UI presentation.
+ViewModel — manages the state of UI elements without needing to know the implementation details of the user interface.
+ViewModel can also serve as a layer between the View and Model, obtaining data from the Model and preparing it for
+display in the View. It can transform the data from the model into a format suitable for UI presentation.
 
 ## MVVM Advantages <a name="mvvm-advantages"></a>
 
