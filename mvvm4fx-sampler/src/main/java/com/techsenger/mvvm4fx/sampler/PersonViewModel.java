@@ -79,11 +79,11 @@ public class PersonViewModel extends AbstractParentViewModel {
     }
 
     void addPerson() {
-        var newPerson = new Person(person.getFirstName(), person.getLastName(), person.getAge());
         firstNameValid.set(person.isFirstNameValid());
         lastNameValid.set(person.isLastNameValid());
         ageValid.set(person.isAgeValid());
         if (firstNameValid.get() && lastNameValid.get() && ageValid.get()) {
+            var newPerson = new Person(person.getFirstName(), person.getLastName(), person.getAge());
             persons.add(newPerson);
             person.setFirstName(null);
             person.setLastName(null);
