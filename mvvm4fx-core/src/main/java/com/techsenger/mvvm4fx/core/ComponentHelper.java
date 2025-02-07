@@ -34,6 +34,6 @@ package com.techsenger.mvvm4fx.core;
  *
  * @author Pavel Castornii
  */
- public interface ComponentHelper<T extends ParentView<?>> {
+public interface ComponentHelper<T extends ParentView<?>> {
 
 }
