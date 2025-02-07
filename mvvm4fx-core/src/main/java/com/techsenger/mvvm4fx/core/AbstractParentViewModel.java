@@ -16,15 +16,13 @@
 
 package com.techsenger.mvvm4fx.core;
 
-import java.util.function.Supplier;
-
 /**
  *
  * @author Pavel Castornii
  */
 public abstract class AbstractParentViewModel extends AbstractViewModel implements ParentViewModel {
 
-    private Supplier<ComponentHelper<?>> componentHelper;
+    private ComponentHelper<?> componentHelper;
 
     public AbstractParentViewModel() {
         super();
@@ -32,10 +30,10 @@ public abstract class AbstractParentViewModel extends AbstractViewModel implemen
 
     @Override
     public ComponentHelper<?> getComponentHelper() {
-        return this.componentHelper.get();
+        return this.componentHelper;
     }
 
-    void setComponentHelper(Supplier<ComponentHelper<?>> componentHelper) {
+    void setComponentHelper(ComponentHelper<?> componentHelper) {
         this.componentHelper = componentHelper;
     }
 }

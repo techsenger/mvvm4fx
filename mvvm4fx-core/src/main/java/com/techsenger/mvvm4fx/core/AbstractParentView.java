@@ -25,7 +25,7 @@ public abstract class AbstractParentView<T extends AbstractParentViewModel> exte
 
     public AbstractParentView(T viewModel) {
         super(viewModel);
-        viewModel.setComponentHelper(() -> createComponentHelper());
+        viewModel.setComponentHelper(createComponentHelper());
     }
 
     /**
