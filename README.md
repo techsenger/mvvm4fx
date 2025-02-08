@@ -14,7 +14,7 @@
 
 # Overview <a name="overview"></a>
 
-Techsenger MVVM4FX is a tiny library for developing JavaFX applications using the MVVM pattern. It provides all
+Techsenger MVVM4FX is a tiny framework for developing JavaFX applications using the MVVM pattern. It provides all
 the necessary interfaces and base class implementations for creating components, which serve as the units of the MVVM
 pattern. Examples of components include tabs, dialog windows, toolbars, image viewers, help pages, and more.
 
