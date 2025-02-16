@@ -119,7 +119,7 @@ Techsenger MVVM4FX is licensed under the Apache License, Version 2.0.
 ## Contributing <a name="contributing"></a>
 
 We welcome all contributions. You can help by reporting bugs, suggesting improvements, or submitting pull requests
-with fixes and new features.
+with fixes and new features. If you have any questions, feel free to reach out — we’ll be happy to assist you.
 
 ## Support Us <a name="support-us"></a>
 
