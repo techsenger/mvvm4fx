@@ -1,4 +1,10 @@
 # Techsenger MVVM4FX
+
+| Support the Project! |
+|:-------------|
+| This project is open-source and free to use, both commercially and non-commercially, which is why we need your help in its development. If you like it, please give it a star ⭐ on GitHub — it helps others discover the project and increases its visibility. You can also contribute, for example, by fixing bugs 🐛 or suggesting improvements 💡 — see [Contributing](#contributing). If you can, financial support 💰 is always appreciated — see [Support Us](#support-us). Thank you for your support! |
+
+## Table of Contents
 * [Overview](#overview)
 * [Features](#features)
 * [MVVM](#mvvm)
@@ -12,7 +18,7 @@
 * [Contributing](#contributing)
 * [Support Us](#support-us)
 
-# Overview <a name="overview"></a>
+## Overview <a name="overview"></a>
 
 Techsenger MVVM4FX is a tiny framework for developing JavaFX applications using the MVVM pattern. It provides all
 the necessary interfaces and base class implementations for creating components, which serve as the units of the MVVM
@@ -26,9 +32,7 @@ independently.
 Each component has template methods initialize() and deinitialize(), which manage its lifecycle. This simplifies the
 control of initialization processes, dependency setup, and resource cleanup when the component is removed.
 
-If you like this project and find it useful, please consider [supporting us](#support-us).
-
-# Features <a name="features"></a>
+## Features <a name="features"></a>
 
 Key features include:
 
@@ -39,9 +43,9 @@ Key features include:
 * Designed without considering FXML support.
 * Detailed documentation and sample code.
 
-# MVVM <a name="mvvm"></a>
+## MVVM <a name="mvvm"></a>
 
-## What is MVVM? <a name="what-is-mvvm"></a>
+### What is MVVM? <a name="what-is-mvvm"></a>
 
 MVVM (Model-View-ViewModel) is an architectural pattern that divides an application's logic into three main parts:
 Model, View, and ViewModel.
@@ -66,7 +70,7 @@ ViewModel — manages the state of UI elements without needing to know the imple
 ViewModel can also serve as a layer between the View and Model, obtaining data from the Model and preparing it for
 display in the View. It can transform the data from the model into a format suitable for UI presentation.
 
-## MVVM Advantages <a name="mvvm-advantages"></a>
+### MVVM Advantages <a name="mvvm-advantages"></a>
 
 * Separation of concerns. MVVM helps to clearly separate the presentation logic (View), business logic and data (Model),
 and interaction logic (ViewModel). This simplifies code maintenance and makes it more readable.
@@ -83,15 +87,15 @@ understandable and structured, easing management of UI element states.
 * UI updates without direct manipulation. The ViewModel manages updates to the View via data binding, avoiding direct
 manipulation of UI elements. This makes the code more flexible and scalable.
 
-# Requirements <a name="requirements"></a>
+## Requirements <a name="requirements"></a>
 
 Java 11+ and JavaFX 11+.
 
-# Dependencies <a name="dependencies"></a>
+## Dependencies <a name="dependencies"></a>
 
 The project will be added to the Maven Central repository in a few days.
 
-# Code Building <a name="code-building"></a>
+## Code Building <a name="code-building"></a>
 
 To build the library use standard Git and Maven commands:
 
@@ -99,7 +103,7 @@ To build the library use standard Git and Maven commands:
     cd mvvm4fx
     mvn clean install
 
-# Running Sampler <a name="sampler"></a>
+## Running Sampler <a name="sampler"></a>
 
 To run the sampler execute the following commands in the root of the project:
 
@@ -108,20 +112,17 @@ To run the sampler execute the following commands in the root of the project:
 
 Please note, that debugger settings are in `mvvm4fx-sampler/pom.xml` file.
 
-# License <a name="license"></a>
+## License <a name="license"></a>
 
 Techsenger MVVM4FX is licensed under the Apache License, Version 2.0.
 
-# Contributing <a name="contributing"></a>
+## Contributing <a name="contributing"></a>
 
 We welcome all contributions. You can help by reporting bugs, suggesting improvements, or submitting pull requests
 with fixes and new features.
 
-# Support Us <a name="support-us"></a>
+## Support Us <a name="support-us"></a>
 
 You can support us financially through [GitHub Sponsors](https://github.com/sponsors/techsenger). Your
 contribution directly helps us keep our open-source projects active, improve their features, and offer ongoing support.
 Besides, we offer multiple sponsorship tiers, with different rewards.
-
-You can also give this project a star ⭐, which will help other users find it and increase its popularity.
-
