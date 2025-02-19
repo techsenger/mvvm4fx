@@ -125,8 +125,12 @@ public abstract class AbstractViewModel implements ViewModel {
         historyPolicy.set(policy);
     }
 
-    protected void setHistoryProvider(HistoryProvider historyProvider) {
+    public void setHistoryProvider(HistoryProvider historyProvider) {
         this.historyProvider = historyProvider;
+    }
+
+    public HistoryProvider getHistoryProvider() {
+        return historyProvider;
     }
 
     protected void postHistoryRestore() {
