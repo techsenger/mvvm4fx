@@ -16,10 +16,19 @@
 
 package com.techsenger.mvvm4fx.core;
 
+import javafx.collections.ObservableList;
+
 /**
  *
  * @author Pavel Castornii
  */
 public interface ParentView<T extends ParentViewModel> extends View<T> {
 
+    /**
+     * Returns a modifiable list of child views. The list is manually maintained to preserve hierarchical
+     * relationships between components when required.
+     *
+     * @return an observable list of child views (never {@code null})
+     */
+    ObservableList<ChildView<?>> getChildren();
 }

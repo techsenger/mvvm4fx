@@ -16,11 +16,19 @@
 
 package com.techsenger.mvvm4fx.core;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+
 /**
  *
  * @author Pavel Castornii
  */
 public abstract class AbstractParentViewModel extends AbstractViewModel implements ParentViewModel {
+
+    private final ObservableList<ChildViewModel> modifiableChildren = FXCollections.observableArrayList();
+
+    private final ObservableList<ChildViewModel> children =
+            FXCollections.unmodifiableObservableList(modifiableChildren);
 
     private ComponentHelper<?> componentHelper;
 
@@ -33,7 +41,16 @@ public abstract class AbstractParentViewModel extends AbstractViewModel implemen
         return this.componentHelper;
     }
 
+    @Override
+    public ObservableList<ChildViewModel> getChildren() {
+        return children;
+    }
+
     void setComponentHelper(ComponentHelper<?> componentHelper) {
         this.componentHelper = componentHelper;
+    }
+
+    ObservableList<ChildViewModel> getModifiableChildren() {
+        return modifiableChildren;
     }
 }

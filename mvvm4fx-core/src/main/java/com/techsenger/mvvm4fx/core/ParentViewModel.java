@@ -16,11 +16,22 @@
 
 package com.techsenger.mvvm4fx.core;
 
+import javafx.collections.ObservableList;
+
 /**
  *
  * @author Pavel Castornii
  */
 public interface ParentViewModel extends ViewModel {
+
+    /**
+     * Returns an unmodifiable observable list of child ViewModels.  To modify the list of children, access the mutable
+     * list through {@link ParentView#getChildren()}. The returned list is guaranteed to be non-null but cannot be
+     * modified directly.
+     *
+     * @return a non-null, unmodifiable observable list of child ViewModels
+     */
+    ObservableList<ChildViewModel> getChildren();
 
     /**
      * Returns component helper that is used for creating child components.

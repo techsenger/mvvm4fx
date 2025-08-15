@@ -16,6 +16,11 @@
 
 package com.techsenger.mvvm4fx.core;
 
+import com.techsenger.toolkit.fx.collections.ListSynchronizer;
+import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
+
 /**
  *
  * @author Pavel Castornii
@@ -23,9 +28,20 @@ package com.techsenger.mvvm4fx.core;
 public abstract class AbstractParentView<T extends AbstractParentViewModel> extends AbstractView<T>
         implements ParentView<T> {
 
+    private final ObservableList<ChildView<?>> children = FXCollections.observableArrayList();
+
+    private final ListSynchronizer childrenSynchronizer;
+
     public AbstractParentView(T viewModel) {
         super(viewModel);
         viewModel.setComponentHelper(createComponentHelper());
+        childrenSynchronizer = new ListSynchronizer<ChildView<?>, ChildViewModel>(children,
+                viewModel.getModifiableChildren(), (v) -> v.getViewModel());
+    }
+
+    @Override
+    public ObservableList<ChildView<?>> getChildren() {
+        return children;
     }
 
     /**
@@ -34,5 +50,23 @@ public abstract class AbstractParentView<T extends AbstractParentViewModel> exte
      */
     protected ComponentHelper<?> createComponentHelper() {
         return null;
+    }
+
+    @Override
+    protected void addListeners(T viewModel) {
+        super.addListeners(viewModel);
+        children.addListener((ListChangeListener<ChildView<?>>) (change) -> {
+            while (change.next()) {
+                if (change.wasAdded()) {
+                    change.getAddedSubList().stream().map(e -> (AbstractChildView<?>) e)
+                            .forEach(e -> e.setParent(this));
+                }
+                if (change.wasRemoved()) {
+                    change.getRemoved().stream().map(e -> (AbstractChildView<?>) e)
+                            .forEach(e -> e.setParent(null));
+                }
+            }
+        });
+
     }
 }

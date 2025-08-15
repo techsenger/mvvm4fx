@@ -16,12 +16,29 @@
 
 package com.techsenger.mvvm4fx.core;
 
+import javafx.beans.property.ReadOnlyObjectProperty;
+
 /**
  * Nested component is any component.
  *
  * @author Pavel Castornii
  */
 public interface ChildView<T extends ChildViewModel> extends ParentView<T> {
+
+    /**
+     * Returns the property representing the parent component of this component. The property holds a reference to the
+     * parent if this component is currently added as a child to another component, or {@code null} if it has no parent.
+     *
+     * @return the property containing the parent component
+     */
+    ReadOnlyObjectProperty<ParentView<?>> parentProperty();
+
+    /**
+     * Returns the value of {@link #parentProperty()}.
+     *
+     * @return the parent component, or {@code null} if this component has no parent
+     */
+    ParentView<?> getParent();
 
     /**
      * Requests focus. Child component implements this method via selecting FX node that will request focus.

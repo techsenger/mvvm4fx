@@ -24,10 +24,9 @@ Techsenger MVVM4FX is a tiny framework for developing JavaFX applications using 
 the necessary interfaces and base class implementations for creating components, which serve as the units of the MVVM
 pattern. Examples of components include tabs, dialog windows, toolbars, image viewers, help pages, and more.
 
-Components can be both parent and child, forming a tree structure that can change dynamically. The library
-provides a mechanism for dynamically creating and removing components but does not include logic for maintaining the
-relationships between them. This is intentional, as there are various options that can be easily implemented
-independently.
+Components can act as both parents and children, forming a tree structure that can change dynamically.
+The library provides a mechanism for dynamically creating and removing components. The logic for maintaining
+relationships between components is optional and applied by the developer only when necessary.
 
 Each component has template methods initialize() and deinitialize(), which manage its lifecycle. This simplifies the
 control of initialization processes, dependency setup, and resource cleanup when the component is removed.
