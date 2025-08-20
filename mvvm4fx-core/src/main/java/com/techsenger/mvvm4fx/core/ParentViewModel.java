@@ -16,6 +16,7 @@
 
 package com.techsenger.mvvm4fx.core;
 
+import java.util.Iterator;
 import javafx.collections.ObservableList;
 
 /**
@@ -32,6 +33,20 @@ public interface ParentViewModel extends ViewModel {
      * @return a non-null, unmodifiable observable list of child ViewModels
      */
     ObservableList<ChildViewModel> getChildren();
+
+    /**
+     * Returns an iterator that traverses the component subtree starting from this component in depth-first order.
+     *
+     * @return an {@link Iterator} that iterates over this component and all of its descendants
+     */
+    SubtreeIterator<ParentViewModel> depthFirstIterator();
+
+    /**
+     * Returns an iterator that traverses the component subtree starting from this component in breadth-first order.
+     *
+     * @return an {@link Iterator} that iterates over this component and all of its descendants
+     */
+    SubtreeIterator<ParentViewModel> breadthFirstIterator();
 
     /**
      * Returns component helper that is used for creating child components.

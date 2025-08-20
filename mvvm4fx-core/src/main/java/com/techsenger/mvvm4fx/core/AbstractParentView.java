@@ -17,6 +17,7 @@
 package com.techsenger.mvvm4fx.core;
 
 import com.techsenger.toolkit.fx.collections.ListSynchronizer;
+import java.util.List;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -42,6 +43,28 @@ public abstract class AbstractParentView<T extends AbstractParentViewModel> exte
     @Override
     public ObservableList<ChildView<?>> getChildren() {
         return children;
+    }
+
+    @Override
+    public SubtreeIterator<ParentView<?>> depthFirstIterator() {
+        return new AbstractDepthFirstIterator<ParentView<?>>(this) {
+
+            @Override
+            List<ParentView<?>> getChildren(ParentView<?> parent) {
+                return (List) parent.getChildren();
+            }
+        };
+    }
+
+    @Override
+    public SubtreeIterator<ParentView<?>> breadthFirstIterator() {
+        return new AbstractBreadthFirstIterator<ParentView<?>>(this) {
+
+            @Override
+            List<ParentView<?>> getChildren(ParentView<?> parent) {
+                return (List) parent.getChildren();
+            }
+        };
     }
 
     /**

@@ -16,6 +16,7 @@
 
 package com.techsenger.mvvm4fx.core;
 
+import java.util.List;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -44,6 +45,28 @@ public abstract class AbstractParentViewModel extends AbstractViewModel implemen
     @Override
     public ObservableList<ChildViewModel> getChildren() {
         return children;
+    }
+
+    @Override
+    public SubtreeIterator<ParentViewModel> depthFirstIterator() {
+        return new AbstractDepthFirstIterator<ParentViewModel>(this) {
+
+            @Override
+            List<ParentViewModel> getChildren(ParentViewModel parent) {
+                return (List) parent.getChildren();
+            }
+        };
+    }
+
+    @Override
+    public SubtreeIterator<ParentViewModel> breadthFirstIterator() {
+        return new AbstractBreadthFirstIterator<ParentViewModel>(this) {
+
+            @Override
+            List<ParentViewModel> getChildren(ParentViewModel parent) {
+                return (List) parent.getChildren();
+            }
+        };
     }
 
     void setComponentHelper(ComponentHelper<?> componentHelper) {

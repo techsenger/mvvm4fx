@@ -16,6 +16,7 @@
 
 package com.techsenger.mvvm4fx.core;
 
+import java.util.Iterator;
 import javafx.collections.ObservableList;
 
 /**
@@ -31,4 +32,18 @@ public interface ParentView<T extends ParentViewModel> extends View<T> {
      * @return an observable list of child views (never {@code null})
      */
     ObservableList<ChildView<?>> getChildren();
+
+    /**
+     * Returns an iterator that traverses the component subtree starting from this component in depth-first order.
+     *
+     * @return an {@link Iterator} that iterates over this component and all of its descendants
+     */
+    SubtreeIterator<ParentView<?>> depthFirstIterator();
+
+    /**
+     * Returns an iterator that traverses the component subtree starting from this component in breadth-first order.
+     *
+     * @return an {@link Iterator} that iterates over this component and all of its descendants
+     */
+    SubtreeIterator<ParentView<?>> breadthFirstIterator();
 }
