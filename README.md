@@ -2,7 +2,7 @@
 
 | Support the Project! |
 |:-------------|
-| This project is open-source and free to use, both commercially and non-commercially, which is why we need your help in its development. If you like it, please give it a star ⭐ on GitHub — it helps others discover the project and increases its visibility. You can also contribute, for example, by fixing bugs 🐛 or suggesting improvements 💡, see [Contributing](#contributing). If you can, financial support 💰 is always appreciated, see [Support Us](#support-us). Thank you for your support! |
+| This project is open-source and free to use, both commercially and non-commercially, which is why we need your help in its development. If you like it, please give it a star ⭐ on GitHub — it helps others discover the project and increases its visibility. You can also contribute, for example, by fixing bugs 🐛 or suggesting improvements 💡, see [Contributing](#contributing). If you can, financial support 💰 is always appreciated, see [Support Us](#support-us). Thank you! |
 
 ## Table of Contents
 * [Overview](#overview)
@@ -10,6 +10,11 @@
 * [MVVM](#mvvm)
     * [What is MVVM?](#what-is-mvvm)
     * [MVVM Advantages](#mvvm-advantages)
+* [Component](#component)
+    * [What is a Component?](#what-is-component)
+    * [Component Structure](#component-structure)
+    * [Component Lifecycle](#component-lifecycle)
+    * [Component Hierarchy](#component-hierarchy)
 * [Requirements](#requirements)
 * [Dependencies](#dependencies)
 * [Code building](#code-building)
@@ -23,13 +28,6 @@
 Techsenger MVVM4FX is a tiny framework for developing JavaFX applications using the MVVM pattern. It provides all
 the necessary interfaces and base class implementations for creating components, which serve as the units of the MVVM
 pattern. Examples of components include tabs, dialog windows, toolbars, image viewers, help pages, and more.
-
-Components can act as both parents and children, forming a tree structure that can change dynamically.
-The library provides a mechanism for dynamically creating and removing components. The logic for maintaining
-relationships between components is optional and applied by the developer only when necessary.
-
-Each component has template methods initialize() and deinitialize(), which manage its lifecycle. This simplifies the
-control of initialization processes, dependency setup, and resource cleanup when the component is removed.
 
 ## Features <a name="features"></a>
 
@@ -85,6 +83,92 @@ understandable and structured, easing management of UI element states.
 
 * UI updates without direct manipulation. The ViewModel manages updates to the View via data binding, avoiding direct
 manipulation of UI elements. This makes the code more flexible and scalable.
+
+## Component <a name="component"></a>
+
+### What is a Component? <a name="what-is-component"></a>
+
+A component is a fundamental, self-contained building block of a user interface (UI) that provides a specific
+piece of functionality and enables user interaction. A component represents a higher-level abstraction than standard
+UI controls, fundamentally distinguished by its compositional nature, which encompasses and organizes multiple
+UI controls, its managed lifecycle, and its capacity to maintain state history. Crucially, while usually components
+also encapsulate business logic, this is not a mandatory trait for all, as structural components like layout containers
+demonstrate.
+
+### Component Structure <a name="component-structure"></a>
+
+A component always consists of at least two classes: a `ViewModel` and a `View`. A natural question might arise: why is
+there no `Model` in the component, given that the pattern is called MVVM? Firstly, a component is a building block for
+constructing a user interface, which might not be related to the application's business logic at all. Secondly, the
+`Model` exists independently of the UI and should have no knowledge of the component's existence.
+
+In addition to the `ViewModel` and `View`, a component may include two optional classes: `ComponentHistory` and
+`ComponentHelper`.
+
+The ComponentHistory enables the preservation of the component's state upon its destruction. Data exchange occurs
+ exclusively between the `ViewModel` and the `ComponentHistory`. During component constructing, data is restored
+from the `ComponentHistory` to the `ViewModel`, while during deinitialization, data from the `ViewModel` is saved to the
+`ComponentHistory`.
+
+The `ComponentHelper` is an interface that allows the `ViewModel` to request the `View` to perform specific actions.
+These actions are typically related to creating or removing other components—operations that cannot be executed solely
+within the `ViewModel`. It is important to emphasize that the `ViewModel` must never hold a direct reference to the
+`View`, and the use of this interface does not violate this rule.
+
+### Component Lifecycle <a name="component-lifecycle"></a>
+
+A component has four distinct states (see `ComponentState`):
+
+1. Unconstructed - The component has not yet been constructed (`ViewModel` exists, but `View` has not been created).
+
+2. Constructed - Both the `ViewModel` and `View` have been created, but the component is not yet initialized.
+It is important to note that when the component transitions to this state, the `ViewModel` state is restored from
+the `ComponentHistory`.
+
+3. Initialized - Both the ViewModel and View have been fully initialized and are ready for use. The component enters
+this state upon completion of the `View#initialize(`) method, but before the call to the `AbstractView#postInitialize()`
+method.
+
+4. Deinitialized - The component has been deinitialized and can't be used anymore. It enters this state upon
+completion of the `View#deinitialize()` method, but before the call to the `AbstractView#postDeinitialize()` method.
+It is important to note that when the component transitions to this state, the `ViewModel` state is saved to the
+`ComponentHistory`.
+
+Each component features `View#initialize()` and `View#deinitialize()` methods, which initialize and deinitialize the
+component, respectively, altering its state. The default implementation of these methods in `AbstractView` is achieved
+through template methods that handle component building/unbuilding, binding/unbinding, adding/removing listeners,
+and adding/removing handlers via corresponding protected methods. It is important to note that these protected methods
+should not be considered the exclusive location for performing such tasks (e.g., adding/removing handlers) within the
+component, but rather as part of the initialization/deinitialization process. Thus, adding/removing handlers may also
+be performed in other methods of the component.
+
+### Component Hierarchy <a name="component-hierarchy"></a>
+
+Components can act as both parents and children, forming a tree structure that can change dynamically.
+The library provides a mechanism for dynamically creating and removing components and includes optional logic
+for managing component relationships, leaving their use to the developer's discretion.
+
+The component tree is built according to the Unidirectional Hierarchy Rule (UHR). This rule establishes a strict
+hierarchical order by explicitly prohibiting circular parent-child relationships, meaning a component cannot
+simultaneously be a direct parent and a direct child of another component. The UHR is designed to maintain a clear,
+acyclic structure, which prevents logical conflicts and ensures predictable behavior. Importantly, this rule does not
+restrict child components from directly accessing or communicating with their parents; it solely forbids cyclical
+dependencies that would compromise the architectural integrity of the hierarchy.
+
+It is crucial to highlight the interaction between components. Consider a parent and a child component as an example.
+
+The parent component's `ViewModel` holds a reference to the child component's `ViewModel` via its `children` field,
+while the child component's `ViewModel` holds a reference to the parent component's `ViewModel` via its `parent` field.
+
+Similarly, the parent component's `View` holds a reference to the child component's `View` through its `children` field,
+and the child component's `View` holds a reference to the parent component's `View` via its `parent` field.
+
+This dualistic linkage establishes a coherent and symmetric relationship between parent and child components at both
+the View and ViewModel layers. The parent and child components are fully aware of each other's existence and state,
+enabling direct coordination and communication within the hierarchy while maintaining clear separation of concerns
+between the presentation (View) and logic (ViewModel) layers. This design ensures consistency and synchronization
+across the component tree without violating the Unidirectional Hierarchy Rule (UHR), as the relationships are strictly
+hierarchical and non-cyclic.
 
 ## Requirements <a name="requirements"></a>
 
