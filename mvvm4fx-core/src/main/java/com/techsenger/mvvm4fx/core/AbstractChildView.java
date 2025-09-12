@@ -16,12 +16,8 @@
 
 package com.techsenger.mvvm4fx.core;
 
-import java.util.ArrayList;
-import java.util.List;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
-import javafx.beans.value.ChangeListener;
-import javafx.scene.Scene;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,16 +32,6 @@ public abstract class AbstractChildView<T extends AbstractChildViewModel> extend
 
     private final ReadOnlyObjectWrapper<ParentView<?>> parent = new ReadOnlyObjectWrapper<>();
 
-    private ChangeListener<? super Scene> sceneListener;
-
-    private Runnable preLayoutPulseListener;
-
-    private Runnable postLayoutPulseListener;
-
-    private final List<LayoutPulseListener> preLayoutPulseListeners = new ArrayList<>();
-
-    private final List<LayoutPulseListener> postLayoutPulseListeners = new ArrayList<>();
-
     public AbstractChildView(T viewModel) {
         super(viewModel);
     }
@@ -59,70 +45,6 @@ public abstract class AbstractChildView<T extends AbstractChildViewModel> extend
     public ParentView<?> getParent() {
         return this.parent.get();
     }
-
-    protected void addLayoutPulseListener(PulseListenerTiming timing, LayoutPulseListener listener) {
-        //if we have scene, we add pulse listener, otherwise we add scene listener
-        var scene = sceneProperty().get();
-        switch (timing) {
-            case BEFORE:
-                if (this.preLayoutPulseListeners.isEmpty()) {
-                    if (this.sceneListener == null) {
-                        if (scene == null) {
-                            addSceneListener();
-                        } else {
-                            addPreLayoutPulseListener(scene);
-                        }
-                    }
-                }
-                this.preLayoutPulseListeners.add(listener);
-                break;
-            case AFTER:
-                if (this.postLayoutPulseListeners.isEmpty()) {
-                    if (this.sceneListener == null) {
-                        if (scene == null) {
-                            addSceneListener();
-                        } else {
-                            addPostLayoutPulseListener(scene);
-                        }
-                    }
-                }
-                this.postLayoutPulseListeners.add(listener);
-                break;
-            default:
-                throw new AssertionError();
-        }
-    }
-
-    protected void removeLayoutPulseListener(PulseListenerTiming timing, LayoutPulseListener listener) {
-        var scene = sceneProperty().get();
-        switch (timing) {
-            case BEFORE:
-                this.preLayoutPulseListeners.remove(listener);
-                if (this.sceneListener == null) {
-                    checkPreLayoutPulseListener(scene);
-                } else {
-                    checkSceneListener();
-                }
-                break;
-            case AFTER:
-                this.postLayoutPulseListeners.remove(listener);
-                if (this.sceneListener == null) {
-                    checkPostLayoutPulseListener(scene);
-                } else {
-                    checkSceneListener();
-                }
-                break;
-            default:
-                throw new AssertionError();
-        }
-    }
-
-    /**
-     * Returns the scene property for getting scene that will be used for setting layout pulse listener.
-     *
-     * @return
-     */
-    protected abstract ReadOnlyObjectProperty<Scene> sceneProperty();
 
     @Override
     protected void addListeners(T viewModel) {
@@ -147,91 +69,5 @@ public abstract class AbstractChildView<T extends AbstractChildViewModel> extend
      */
     protected void setParent(ParentView<?> parent) {
         this.parent.set(parent);
-    }
-
-    private void addSceneListener() {
-        this.sceneListener = (ov, oldV, newV) -> {
-            if (newV != null) {
-                if (!this.preLayoutPulseListeners.isEmpty()) {
-                    addPreLayoutPulseListener(newV);
-                }
-                if (!this.postLayoutPulseListeners.isEmpty()) {
-                    addPostLayoutPulseListener(newV);
-                }
-                removeSceneListener();
-            }
-        };
-        sceneProperty().addListener(this.sceneListener);
-        logger.debug("Added scene listener for {}", getViewModel().getKey());
-    }
-
-    private void checkSceneListener() {
-        if (this.preLayoutPulseListeners.isEmpty() && this.postLayoutPulseListeners.isEmpty()) {
-            removeSceneListener();
-        }
-    }
-
-    private void removeSceneListener() {
-        if (this.sceneListener != null) {
-            sceneProperty().removeListener(this.sceneListener);
-            this.sceneListener = null;
-            logger.debug("Removed scene listener for {}", getViewModel().getKey());
-        }
-    }
-
-    private void addPreLayoutPulseListener(Scene scene) {
-        this.preLayoutPulseListener = () -> {
-            callListeners(this.preLayoutPulseListeners);
-            checkPreLayoutPulseListener(scene);
-        };
-        scene.addPreLayoutPulseListener(this.preLayoutPulseListener);
-        logger.debug("Added pre layout pulse listener for {}", getViewModel().getKey());
-    }
-
-    private void checkPreLayoutPulseListener(Scene scene) {
-        if (this.preLayoutPulseListeners.isEmpty()) {
-            removePreLayoutPulseListener(scene);
-        }
-    }
-
-    private void removePreLayoutPulseListener(Scene scene) {
-        if (this.preLayoutPulseListener != null) {
-            scene.removePreLayoutPulseListener(this.preLayoutPulseListener);
-            this.preLayoutPulseListener = null;
-            logger.debug("Removed pre layout pulse listener for {}", getViewModel().getKey());
-        }
-    }
-
-    private void addPostLayoutPulseListener(Scene scene) {
-        this.postLayoutPulseListener = () -> {
-            callListeners(this.postLayoutPulseListeners);
-            checkPostLayoutPulseListener(scene);
-        };
-        scene.addPostLayoutPulseListener(this.postLayoutPulseListener);
-        logger.debug("Added post layout pulse listener for {}", getViewModel().getKey());
-    }
-
-    private void checkPostLayoutPulseListener(Scene scene) {
-        if (this.postLayoutPulseListeners.isEmpty()) {
-            removePostLayoutPulseListener(scene);
-        }
-    }
-
-    private void removePostLayoutPulseListener(Scene scene) {
-        if (this.postLayoutPulseListener != null) {
-            scene.removePostLayoutPulseListener(this.postLayoutPulseListener);
-            this.postLayoutPulseListener = null;
-            logger.debug("Removed post layout pulse listener for {}", getViewModel().getKey());
-        }
-    }
-
-    private void callListeners(List<LayoutPulseListener> listeners) {
-        var iterator = listeners.iterator();
-        while (iterator.hasNext()) {
-           var listener = iterator.next();
-           if (!listener.onLayoutPulse()) {
-               iterator.remove();
-           }
-       }
     }
 }
