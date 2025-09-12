@@ -23,13 +23,13 @@ import org.slf4j.LoggerFactory;
  *
  * @author Pavel Castornii
  */
-public abstract class AbstractView<T extends AbstractViewModel> implements View<T> {
+public abstract class AbstractComponentView<T extends AbstractComponentViewModel> implements ComponentView<T> {
 
-    private static final Logger logger = LoggerFactory.getLogger(AbstractView.class);
+    private static final Logger logger = LoggerFactory.getLogger(AbstractComponentView.class);
 
     private T viewModel;
 
-    public AbstractView(T viewModel) {
+    public AbstractComponentView(T viewModel) {
         this.viewModel = viewModel;
         this.viewModel.stateWrapper().set(ComponentState.CONSTRUCTED);
     }

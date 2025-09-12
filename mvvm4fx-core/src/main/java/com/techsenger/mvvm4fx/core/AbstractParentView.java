@@ -26,7 +26,7 @@ import javafx.collections.ObservableList;
  *
  * @author Pavel Castornii
  */
-public abstract class AbstractParentView<T extends AbstractParentViewModel> extends AbstractView<T>
+public abstract class AbstractParentView<T extends AbstractParentViewModel> extends AbstractComponentView<T>
         implements ParentView<T> {
 
     private final ObservableList<ChildView<?>> children = FXCollections.observableArrayList();

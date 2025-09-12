@@ -31,9 +31,9 @@ import org.slf4j.LoggerFactory;
  *
  * @author Pavel Castornii
  */
-public abstract class AbstractViewModel implements ViewModel {
+public abstract class AbstractComponentViewModel implements ComponentViewModel {
 
-    private static final Logger logger = LoggerFactory.getLogger(AbstractViewModel.class);
+    private static final Logger logger = LoggerFactory.getLogger(AbstractComponentViewModel.class);
 
     private final ReadOnlyObjectWrapper<ComponentState> state =
             new ReadOnlyObjectWrapper<>(ComponentState.UNCONSTRUCTED);
@@ -46,7 +46,7 @@ public abstract class AbstractViewModel implements ViewModel {
 
     private boolean historyProvided;
 
-    public AbstractViewModel() {
+    public AbstractComponentViewModel() {
         state.addListener((ov, oldV, newV) -> {
             var policy = getHistoryPolicy();
             if (state.get() == ComponentState.CONSTRUCTED) {

@@ -23,7 +23,7 @@ import javafx.collections.ObservableList;
  *
  * @author Pavel Castornii
  */
-public interface ParentViewModel extends ViewModel {
+public interface ParentViewModel extends ComponentViewModel {
 
     /**
      * Returns an unmodifiable observable list of child ViewModels.  To modify the list of children, access the mutable

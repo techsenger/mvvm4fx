@@ -97,50 +97,51 @@ demonstrate.
 
 ### Component Structure <a name="component-structure"></a>
 
-A component always consists of at least two classes: a `ViewModel` and a `View`. A natural question might arise: why is
-there no `Model` in the component, given that the pattern is called MVVM? Firstly, a component is a building block for
-constructing a user interface, which might not be related to the application's business logic at all. Secondly, the
-`Model` exists independently of the UI and should have no knowledge of the component's existence.
+A component always consists of at least two classes: a `ComponentViewModel` and a `ComponentView`. A natural question
+might arise: why is there no `Model` in the component, given that the pattern is called MVVM? Firstly, a component
+is a building block for constructing a user interface, which might not be related to the application's business logic
+at all. Secondly, the `Model` exists independently of the UI and should have no knowledge of the component's existence.
 
-In addition to the `ViewModel` and `View`, a component may include two optional classes: `ComponentHistory` and
-`ComponentHelper`.
+In addition to the `ComponentViewModel` and `ComponentView`, a component may include two optional classes:
+`ComponentHistory` and `ComponentHelper`.
 
-The ComponentHistory enables the preservation of the component's state upon its destruction. Data exchange occurs
- exclusively between the `ViewModel` and the `ComponentHistory`. During component constructing, data is restored
-from the `ComponentHistory` to the `ViewModel`, while during deinitialization, data from the `ViewModel` is saved to the
-`ComponentHistory`.
+The `ComponentHistory` enables the preservation of the component's state upon its destruction. Data exchange occurs
+exclusively between the `ComponentViewModel` and the `ComponentHistory`. During component constructing, data is restored
+from the `ComponentHistory` to the `ComponentViewModel`, while during deinitialization, data from the
+`ComponentViewModel` is saved to the `ComponentHistory`.
 
-The `ComponentHelper` is an interface that allows the `ViewModel` to request the `View` to perform specific actions.
-These actions are typically related to creating or removing other components—operations that cannot be executed solely
-within the `ViewModel`. It is important to emphasize that the `ViewModel` must never hold a direct reference to the
-`View`, and the use of this interface does not violate this rule.
+The `ComponentHelper` is an interface that allows the `ComponentViewModel` to request the `ComponentView` to perform
+specific actions. These actions are typically related to creating or removing other components—operations that cannot
+be executed solely within the `ComponentViewModel`. It is important to emphasize that the `ComponentViewModel` must
+never hold a direct reference to the `ComponentView`, and the use of this interface does not violate this rule.
 
 ### Component Lifecycle <a name="component-lifecycle"></a>
 
 A component has four distinct states (see `ComponentState`):
 
-1. Unconstructed - The component has not yet been constructed (`ViewModel` exists, but `View` has not been created).
+1. Unconstructed - The component has not yet been constructed (`ComponentViewModel` exists, but `ComponentView` has
+not been created).
 
-2. Constructed - Both the `ViewModel` and `View` have been created, but the component is not yet initialized.
-It is important to note that when the component transitions to this state, the `ViewModel` state is restored from
-the `ComponentHistory`.
+2. Constructed - Both the `ComponentViewModel` and `ComponentView` have been created, but the component is not yet
+initialized. It is important to note that when the component transitions to this state, the `ComponentViewModel` state
+is restored from the `ComponentHistory`.
 
-3. Initialized - Both the ViewModel and View have been fully initialized and are ready for use. The component enters
-this state upon completion of the `View#initialize(`) method, but before the call to the `AbstractView#postInitialize()`
-method.
+3. Initialized - Both the `ComponentViewModel` and `ComponentView` have been fully initialized and are ready for use.
+The component enters this state upon completion of the `ComponentView#initialize(`) method, but before the call to the
+`AbstractComponentView#postInitialize()` method.
 
 4. Deinitialized - The component has been deinitialized and can't be used anymore. It enters this state upon
-completion of the `View#deinitialize()` method, but before the call to the `AbstractView#postDeinitialize()` method.
-It is important to note that when the component transitions to this state, the `ViewModel` state is saved to the
-`ComponentHistory`.
+completion of the `ComponentView#deinitialize()` method, but before the call to the
+`AbstractComponentView#postDeinitialize()` method. It is important to note that when the component transitions to this
+state, the `ComponentViewModel` state is saved to the `ComponentHistory`.
 
-Each component features `View#initialize()` and `View#deinitialize()` methods, which initialize and deinitialize the
-component, respectively, altering its state. The default implementation of these methods in `AbstractView` is achieved
-through template methods that handle component building/unbuilding, binding/unbinding, adding/removing listeners,
-and adding/removing handlers via corresponding protected methods. It is important to note that these protected methods
-should not be considered the exclusive location for performing such tasks (e.g., adding/removing handlers) within the
-component, but rather as part of the initialization/deinitialization process. Thus, adding/removing handlers may also
-be performed in other methods of the component.
+Each component features `ComponentView#initialize()` and `ComponentView#deinitialize()` methods, which initialize and
+deinitialize the component, respectively, altering its state. The default implementation of these methods in
+`AbstractComponentView` is achieved through template methods that handle component building/unbuilding, binding/unbinding,
+adding/removing listeners, and adding/removing handlers via corresponding protected methods. It is important to note
+that these protected methods should not be considered the exclusive location for performing such tasks (e.g.,
+adding/removing handlers) within the component, but rather as part of the initialization/deinitialization process.
+Thus, adding/removing handlers may also be performed in other methods of the component.
 
 ### Component Hierarchy <a name="component-hierarchy"></a>
 
@@ -156,12 +157,11 @@ restrict child components from directly accessing or communicating with their pa
 dependencies that would compromise the architectural integrity of the hierarchy.
 
 It is crucial to highlight the interaction between components. Consider a parent and a child component as an example.
-
-The parent component's `ViewModel` holds a reference to the child component's `ViewModel` via its `children` field,
-while the child component's `ViewModel` holds a reference to the parent component's `ViewModel` via its `parent` field.
-
-Similarly, the parent component's `View` holds a reference to the child component's `View` through its `children` field,
-and the child component's `View` holds a reference to the parent component's `View` via its `parent` field.
+The parent component's `ComponentViewModel` holds a reference to the child component's `ComponentViewModel` via its
+`children` field, while the child component's `ComponentViewModel` holds a reference to the parent component's
+`ComponentViewModel` via its `parent` field. Similarly, the parent component's `ComponentView` holds a reference to the
+child component's `ComponentView` through its `children` field, and the child component's `ComponentView` holds a
+reference to the parent component's `ComponentView` via its `parent` field.
 
 This dualistic linkage establishes a coherent and symmetric relationship between parent and child components at both
 the View and ViewModel layers. The parent and child components are fully aware of each other's existence and state,

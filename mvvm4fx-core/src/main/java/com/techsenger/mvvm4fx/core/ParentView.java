@@ -23,7 +23,7 @@ import javafx.collections.ObservableList;
  *
  * @author Pavel Castornii
  */
-public interface ParentView<T extends ParentViewModel> extends View<T> {
+public interface ParentView<T extends ParentViewModel> extends ComponentView<T> {
 
     /**
      * Returns a modifiable list of child views. The list is manually maintained to preserve hierarchical

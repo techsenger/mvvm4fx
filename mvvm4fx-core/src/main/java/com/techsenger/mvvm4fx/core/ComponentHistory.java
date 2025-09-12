@@ -23,7 +23,7 @@ import java.io.Serializable;
  *
  * @author Pavel Castornii
  */
-public interface ComponentHistory<T extends ViewModel> extends Serializable {
+public interface ComponentHistory<T extends ComponentViewModel> extends Serializable {
 
     /**
      * If history hasn't been created yet, it can be created automatically. In this case this method is called

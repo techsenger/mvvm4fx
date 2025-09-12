@@ -24,7 +24,7 @@ import javafx.collections.ObservableList;
  *
  * @author Pavel Castornii
  */
-public abstract class AbstractParentViewModel extends AbstractViewModel implements ParentViewModel {
+public abstract class AbstractParentViewModel extends AbstractComponentViewModel implements ParentViewModel {
 
     private final ObservableList<ChildViewModel> modifiableChildren = FXCollections.observableArrayList();
 

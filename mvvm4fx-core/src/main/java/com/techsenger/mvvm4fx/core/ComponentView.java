@@ -20,10 +20,10 @@ package com.techsenger.mvvm4fx.core;
  *
  * @author Pavel Castornii
  */
-public interface View<T extends ViewModel> {
+public interface ComponentView<T extends ComponentViewModel> {
 
     /**
-     * Returns view model.
+     * Returns component view model.
      *
      * @return
      */

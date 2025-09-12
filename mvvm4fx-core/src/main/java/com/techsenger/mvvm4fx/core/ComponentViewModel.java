@@ -23,7 +23,7 @@ import javafx.beans.property.ReadOnlyObjectProperty;
  *
  * @author Pavel Castornii
  */
-public interface ViewModel {
+public interface ComponentViewModel {
 
     /**
      * Returns the key of the component.
