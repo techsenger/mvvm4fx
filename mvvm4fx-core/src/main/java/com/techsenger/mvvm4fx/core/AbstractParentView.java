@@ -35,7 +35,7 @@ public abstract class AbstractParentView<T extends AbstractParentViewModel> exte
 
     public AbstractParentView(T viewModel) {
         super(viewModel);
-        viewModel.setComponentHelper(createComponentHelper());
+        viewModel.setBridge(createBridge());
         childrenSynchronizer = new ListSynchronizer<ChildView<?>, ChildViewModel>(children,
                 viewModel.getModifiableChildren(), (v) -> v.getViewModel());
     }
@@ -68,10 +68,10 @@ public abstract class AbstractParentView<T extends AbstractParentViewModel> exte
     }
 
     /**
-     * Creates dialog helper that then is set to view model. Default implementation provides null.
+     * Creates bridge that then is set to view model. Default implementation provides null.
      * @return
      */
-    protected ComponentHelper<?> createComponentHelper() {
+    protected ComponentBridge createBridge() {
         return null;
     }
 

@@ -18,10 +18,10 @@ package com.techsenger.mvvm4fx.core;
 
 /**
  * This interface is used by the ParentViewModel to add or remove child components (such as tabs, panes, dialogs, etc.).
- * It provides a helper for managing these components. The component helper is created in the View and has a reference
+ * It provides a bridge for managing these components. The component bridge is created in the View and has a reference
  * to the View, but it does not provide a direct reference to the ViewModel.
  *
- * <p>For example, to show a dialog, the helper implementation can include a method like the following:</p>
+ * <p>For example, to show a dialog, the bridge implementation can include a method like the following:</p>
  *
  * <pre>
  * void openDialog(DialogViewModel dialogViewModel) {
@@ -34,6 +34,6 @@ package com.techsenger.mvvm4fx.core;
  *
  * @author Pavel Castornii
  */
-public interface ComponentHelper<T extends ParentView<?>> {
+public interface ComponentBridge {
 
 }

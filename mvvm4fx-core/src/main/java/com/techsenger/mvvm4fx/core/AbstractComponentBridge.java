@@ -20,11 +20,11 @@ package com.techsenger.mvvm4fx.core;
  *
  * @author Pavel Castornii
  */
-public abstract class AbstractComponentHelper<T extends ParentView<?>> implements ComponentHelper<T> {
+public abstract class AbstractComponentBridge<T extends ParentView<?>> implements ComponentBridge {
 
     private final T view;
 
-    public AbstractComponentHelper(T view) {
+    public AbstractComponentBridge(T view) {
         this.view = view;
     }
 

@@ -102,18 +102,25 @@ might arise: why is there no `Model` in the component, given that the pattern is
 is a building block for constructing a user interface, which might not be related to the application's business logic
 at all. Secondly, the `Model` exists independently of the UI and should have no knowledge of the component's existence.
 
+It is important to note, that in addition to its standard functions the `ComponentView` is responsible for managing the
+creation and removal of only two types of components: its own child components and components with an externally
+provided API, such as dialogs or popup windows. This limitation exists because the ComponentView can only fully manage
+elements within its own scope and awareness.
+
 In addition to the `ComponentViewModel` and `ComponentView`, a component may include two optional classes:
-`ComponentHistory` and `ComponentHelper`.
+`ComponentHistory` and `ComponentBridge`.
 
 The `ComponentHistory` enables the preservation of the component's state upon its destruction. Data exchange occurs
 exclusively between the `ComponentViewModel` and the `ComponentHistory`. During component constructing, data is restored
 from the `ComponentHistory` to the `ComponentViewModel`, while during deinitialization, data from the
 `ComponentViewModel` is saved to the `ComponentHistory`.
 
-The `ComponentHelper` is an interface that allows the `ComponentViewModel` to request the `ComponentView` to perform
-specific actions. These actions are typically related to creating or removing other components—operations that cannot
+The `ComponentBridge` is an interface that allows the `ComponentViewModel` to request the `ComponentView` to perform
+specific actions. These actions are typically related to creating or removing other components — operations that cannot
 be executed solely within the `ComponentViewModel`. It is important to emphasize that the `ComponentViewModel` must
 never hold a direct reference to the `ComponentView`, and the use of this interface does not violate this rule.
+The bridge can be created and set in the `AbstractParentViewModel` either by overriding the
+`AbstractParentView#createBridge()` method or by using `AbstractParentViewModel#setBridge(ComponentBridge)`
 
 ### Component Lifecycle <a name="component-lifecycle"></a>
 

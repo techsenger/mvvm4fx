@@ -49,9 +49,9 @@ public interface ParentViewModel extends ComponentViewModel {
     SubtreeIterator<ParentViewModel> breadthFirstIterator();
 
     /**
-     * Returns component helper that is used for creating child components.
+     * Returns component bridge that can be used for managing other components.
      *
      * @return
      */
-    ComponentHelper<?> getComponentHelper();
+    ComponentBridge getBridge();
 }
