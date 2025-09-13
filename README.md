@@ -13,6 +13,7 @@
 * [Component](#component)
     * [What is a Component?](#what-is-component)
     * [Component Structure](#component-structure)
+    * [Component Key](#component-key)
     * [Component Lifecycle](#component-lifecycle)
     * [Component Hierarchy](#component-hierarchy)
 * [Requirements](#requirements)
@@ -111,9 +112,10 @@ In addition to the `ComponentViewModel` and `ComponentView`, a component may inc
 `ComponentHistory` and `ComponentBridge`.
 
 The `ComponentHistory` enables the preservation of the component's state upon its destruction. Data exchange occurs
-exclusively between the `ComponentViewModel` and the `ComponentHistory`. During component constructing, data is restored
+exclusively between the `ComponentViewModel` and the `ComponentHistory`. During component construction, data is restored
 from the `ComponentHistory` to the `ComponentViewModel`, while during deinitialization, data from the
-`ComponentViewModel` is saved to the `ComponentHistory`.
+`ComponentViewModel` is saved to the `ComponentHistory`. The volume of state history that is restored and saved is
+configured via the HistoryPolicy enum.
 
 The `ComponentBridge` is an interface that allows the `ComponentViewModel` to request the `ComponentView` to perform
 specific actions. These actions are typically related to creating or removing other components — operations that cannot
@@ -121,6 +123,17 @@ be executed solely within the `ComponentViewModel`. It is important to emphasize
 never hold a direct reference to the `ComponentView`, and the use of this interface does not violate this rule.
 The bridge can be created and set in the `AbstractParentViewModel` either by overriding the
 `AbstractParentView#createBridge()` method or by using `AbstractParentViewModel#setBridge(ComponentBridge)`
+
+### Component Key <a name="component-key"></a>
+
+Every component has a unique key, which is used for component identification and can also be utilized to identify
+objects created by the component (such as events, messages, etc.). To facilitate this, the library provides the
+`ComponentKey` interface, allowing developers to implement keys in various ways—using enums, constants, and other
+methods—based on their specific needs.
+
+The need for a key arises from the fact that a component's own classes may reside within private packages of a
+module and thus be inaccessible for identification purposes. The use of keys solves this problem, as keys can and
+should be placed in publicly accessible (exported) packages.
 
 ### Component Lifecycle <a name="component-lifecycle"></a>
 
