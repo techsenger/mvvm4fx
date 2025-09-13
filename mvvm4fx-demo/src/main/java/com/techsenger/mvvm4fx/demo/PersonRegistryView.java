@@ -96,6 +96,7 @@ public class PersonRegistryView extends AbstractParentView<PersonRegistryViewMod
             var dialog = dialogV.getDialog();
             dialog.initOwner(stage);
             dialog.initModality(Modality.WINDOW_MODAL);
+            // javafx 19 has a bug - it shows a system notification in Ubuntu when closing
             var result = dialog.showAndWait();
             viewModel.add(result);
             dialogV.deinitialize();

@@ -192,7 +192,7 @@ hierarchical and non-cyclic.
 
 ## Requirements <a name="requirements"></a>
 
-Java 11+ and JavaFX 11+.
+Java 11+ and JavaFX 19.
 
 ## Dependencies <a name="dependencies"></a>
 

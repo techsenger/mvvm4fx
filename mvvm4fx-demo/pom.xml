@@ -15,8 +15,6 @@
 
     <properties>
         <maven.deploy.skip>true</maven.deploy.skip>
-        <!-- javafx 19 shows system notification in Ubuntu when closing -->
-        <javafx.version>24</javafx.version>
     </properties>
 
     <dependencies>
@@ -31,17 +29,14 @@
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-base</artifactId>
-            <version>${javafx.version}</version>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-graphics</artifactId>
-            <version>${javafx.version}</version>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
-            <version>${javafx.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
