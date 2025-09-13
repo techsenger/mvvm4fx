@@ -19,7 +19,7 @@
 * [Requirements](#requirements)
 * [Dependencies](#dependencies)
 * [Code building](#code-building)
-* [Running Sampler](#sampler)
+* [Running Demo](#demo)
 * [License](#license)
 * [Contributing](#contributing)
 * [👉 Support Us](#support-us)
@@ -206,14 +206,14 @@ To build the library use standard Git and Maven commands:
     cd mvvm4fx
     mvn clean install
 
-## Running Sampler <a name="sampler"></a>
+## Running Demo <a name="demo"></a>
 
-To run the sampler execute the following commands in the root of the project:
+To run the demo execute the following commands in the root of the project:
 
-    cd mvvm4fx-sampler
-    mvn javafx:run
+    cd mvvm4fx-demo
+    mvn javafx:run -o
 
-Please note, that debugger settings are in `mvvm4fx-sampler/pom.xml` file.
+Please note, that debugger settings are in `mvvm4fx-demo/pom.xml` file.
 
 ## License <a name="license"></a>
 

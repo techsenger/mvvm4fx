@@ -14,19 +14,17 @@
  * limitations under the License.
  */
 
-package com.techsenger.mvvm4fx.sampler;
-
-import com.techsenger.mvvm4fx.core.ComponentKey;
+package com.techsenger.mvvm4fx.demo;
 
 /**
  *
  * @author Pavel Castornii
  */
-public final class DemoKeys {
+public final class Style {
 
-    public static final ComponentKey PERSON = new DemoKey("Person component");
+    public static final double INSET = 10.0;
 
-    private DemoKeys() {
-        //empty
+    private Style() {
+        // empty
     }
 }

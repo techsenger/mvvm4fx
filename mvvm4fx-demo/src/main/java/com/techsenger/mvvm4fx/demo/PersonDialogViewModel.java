@@ -14,28 +14,23 @@
  * limitations under the License.
  */
 
-package com.techsenger.mvvm4fx.sampler;
+package com.techsenger.mvvm4fx.demo;
 
 import com.techsenger.mvvm4fx.core.AbstractParentViewModel;
 import com.techsenger.mvvm4fx.core.ComponentKey;
-import javafx.beans.binding.Bindings;
+import com.techsenger.mvvm4fx.demo.model.Person;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 
 /**
  *
  * @author Pavel Castornii
  */
-public class PersonViewModel extends AbstractParentViewModel {
+public class PersonDialogViewModel extends AbstractParentViewModel {
 
-    private final StringProperty title = new SimpleStringProperty();
-
-    private final ObservableList<Person> persons = FXCollections.observableArrayList(
-            new Person("John", "Smith", 25), new Person("Mike", "Brown", 40), new Person("Sarah", "Wilson", 34));
+    private final StringProperty title = new SimpleStringProperty("New Person");
 
     private final Person person = new Person();
 
@@ -45,25 +40,17 @@ public class PersonViewModel extends AbstractParentViewModel {
 
     private final BooleanProperty ageValid = new SimpleBooleanProperty(true);
 
-    public PersonViewModel() {
-        title.bind(Bindings.size(persons).asString("Person Component (%d Items)"));
-    }
-
     @Override
     public ComponentKey getKey() {
-        return DemoKeys.PERSON;
-    }
-
-    ObservableList<Person> getPersons() {
-        return persons;
-    }
-
-    Person getPerson() {
-        return person;
+        return DemoKeys.PERSON_DIALOG;
     }
 
     StringProperty titleProperty() {
         return title;
+    }
+
+    Person getPerson() {
+        return person;
     }
 
     BooleanProperty firstNameValidProperty() {
@@ -78,16 +65,15 @@ public class PersonViewModel extends AbstractParentViewModel {
         return ageValid;
     }
 
-    void addPerson() {
+    boolean isPersonValid() {
         firstNameValid.set(person.isFirstNameValid());
         lastNameValid.set(person.isLastNameValid());
         ageValid.set(person.isAgeValid());
-        if (firstNameValid.get() && lastNameValid.get() && ageValid.get()) {
-            var newPerson = new Person(person.getFirstName(), person.getLastName(), person.getAge());
-            persons.add(newPerson);
-            person.setFirstName(null);
-            person.setLastName(null);
-            person.setAge(null);
-        }
+        return firstNameValid.get() && lastNameValid.get() && ageValid.get();
+    }
+
+    Person createPerson() {
+        var newPerson = new Person(person.getFirstName(), person.getLastName(), person.getAge());
+        return newPerson;
     }
 }

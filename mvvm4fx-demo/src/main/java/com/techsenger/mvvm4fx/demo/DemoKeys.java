@@ -14,25 +14,21 @@
  * limitations under the License.
  */
 
-package com.techsenger.mvvm4fx.sampler;
+package com.techsenger.mvvm4fx.demo;
 
-import javafx.application.Application;
-import javafx.stage.Stage;
+import com.techsenger.mvvm4fx.core.ComponentKey;
 
 /**
  *
  * @author Pavel Castornii
  */
-public class Sampler extends Application {
+public final class DemoKeys {
 
-    @Override
-    public void start(Stage stage) throws Exception {
-        var viewModel = new PersonViewModel();
-        var view = new PersonView(stage, viewModel);
-        view.initialize();
-        //just to show that every component must be deinitialized,
-        //it has no effect on the demo application
-        stage.setOnCloseRequest(e -> view.deinitialize());
+    public static final ComponentKey PERSON_REGISTRY = new DemoKey("Person Registry");
+
+    public static final ComponentKey PERSON_DIALOG = new DemoKey("Person Dialog");
+
+    private DemoKeys() {
+        //empty
     }
-
 }

@@ -42,7 +42,7 @@
     </developers>
 
     <properties>
-        <publishing.plugin.exclusions>mvvm4fx-sampler</publishing.plugin.exclusions>
+        <publishing.plugin.exclusions>mvvm4fx-demo</publishing.plugin.exclusions>
     </properties>
 
     <repositories>
@@ -79,7 +79,7 @@
 
     <modules>
         <module>mvvm4fx-core</module>
-        <module>mvvm4fx-sampler</module>
+        <module>mvvm4fx-demo</module>
     </modules>
 </project>
 

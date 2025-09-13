@@ -14,12 +14,24 @@
  * limitations under the License.
  */
 
-module com.techsenger.mvvm4fx.sampler {
-    requires com.techsenger.mvvm4fx.core;
-    requires org.slf4j;
-    requires javafx.base;
-    requires javafx.graphics;
-    requires javafx.controls;
+package com.techsenger.mvvm4fx.demo;
 
-    exports com.techsenger.mvvm4fx.sampler;
+import com.techsenger.mvvm4fx.core.ComponentKey;
+
+/**
+ *
+ * @author Pavel Castornii
+ */
+public class DemoKey implements ComponentKey {
+
+    private final String name;
+
+    public DemoKey(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public String toString() {
+        return name;
+    }
 }

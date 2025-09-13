@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.techsenger.mvvm4fx.sampler;
+package com.techsenger.mvvm4fx.demo.model;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -26,6 +26,8 @@ import javafx.beans.property.StringProperty;
  * @author Pavel Castornii
  */
 public class Person {
+
+    private final ObjectProperty<Integer> id = new SimpleObjectProperty<>();
 
     private final StringProperty firstName = new SimpleStringProperty();
 
@@ -41,6 +43,18 @@ public class Person {
         setFirstName(firstName);
         setLastName(lastName);
         setAge(age);
+    }
+
+    public Integer getId() {
+        return id.get();
+    }
+
+    public void setId(Integer value) {
+        id.set(value);
+    }
+
+    public ObjectProperty<Integer> idProperty() {
+        return id;
     }
 
     public StringProperty firstNameProperty() {

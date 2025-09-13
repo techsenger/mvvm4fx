@@ -14,33 +14,29 @@
  * limitations under the License.
  */
 
-package com.techsenger.mvvm4fx.sampler;
+package com.techsenger.mvvm4fx.demo;
 
 import com.techsenger.mvvm4fx.core.AbstractParentView;
+import com.techsenger.mvvm4fx.demo.model.Person;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
-import javafx.geometry.Insets;
+import javafx.event.ActionEvent;
 import javafx.geometry.Pos;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
 import javafx.util.converter.IntegerStringConverter;
 
 /**
  *
  * @author Pavel Castornii
  */
-public class PersonView extends AbstractParentView<PersonViewModel> {
-
-    private final TableView<Person> personTable = new TableView<>();
+public class PersonDialogView extends AbstractParentView<PersonDialogViewModel> {
 
     private final Label firstNameLabel = new Label("First Name");
 
@@ -54,35 +50,24 @@ public class PersonView extends AbstractParentView<PersonViewModel> {
 
     private final Label ageLabel = new Label("Age");
 
-    private final Button addButton = new Button("Add");
-
     private final HBox hBox = new HBox(firstNameLabel, firstNameTextField, lastNameLabel, lastNameTextField,
-                ageLabel, ageTextField, addButton);
+                ageLabel, ageTextField);
 
-    private final VBox root = new VBox(personTable, hBox);
+    private final Dialog<Person> dialog = new Dialog<>();
 
-    private final Stage stage;
+    private Button okButton;
 
-    public PersonView(Stage stage, PersonViewModel viewModel) {
+    public PersonDialogView(PersonDialogViewModel viewModel) {
         super(viewModel);
-        this.stage = stage;
+    }
+
+    public Dialog<Person> getDialog() {
+        return this.dialog;
     }
 
     @Override
-    protected void build(PersonViewModel viewModel) {
+    protected void build(PersonDialogViewModel viewModel) {
         super.build(viewModel);
-
-        VBox.setVgrow(personTable, Priority.ALWAYS);
-        personTable.setItems(viewModel.getPersons());
-        personTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-        var firstNameColumn = new TableColumn<Person, String>("First Name");
-        firstNameColumn.setCellValueFactory(data -> data.getValue().firstNameProperty());
-        var lastNameColumn = new TableColumn<Person, String>("Last Name");
-        lastNameColumn.setCellValueFactory(data -> data.getValue().lastNameProperty());
-        var ageColumn = new TableColumn<Person, Integer>("Age");
-        ageColumn.setCellValueFactory(data -> data.getValue().ageProperty());
-        personTable.getColumns().addAll(firstNameColumn, lastNameColumn, ageColumn);
-
         firstNameLabel.setMinWidth(Region.USE_PREF_SIZE);
         HBox.setHgrow(firstNameTextField, Priority.ALWAYS);
         lastNameLabel.setMinWidth(Region.USE_PREF_SIZE);
@@ -91,17 +76,24 @@ public class PersonView extends AbstractParentView<PersonViewModel> {
         HBox.setHgrow(ageTextField, Priority.ALWAYS);
         hBox.setSpacing(10);
         hBox.setAlignment(Pos.CENTER_LEFT);
-        addButton.setMinWidth(Region.USE_PREF_SIZE);
 
-        root.setPadding(new Insets(10));
-        root.setSpacing(10);
-        stage.setScene(new Scene(root, 800, 500));
+        dialog.getDialogPane().setContent(hBox);
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.CANCEL, ButtonType.OK);
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == ButtonType.OK) {
+                return viewModel.createPerson();
+            }
+            return null;
+        });
+
+        this.okButton = (Button) dialog.getDialogPane().lookupButton(ButtonType.OK);
     }
 
     @Override
-    protected void bind(PersonViewModel viewModel) {
+    protected void bind(PersonDialogViewModel viewModel) {
         super.bind(viewModel);
-        stage.titleProperty().bind(viewModel.titleProperty());
+        dialog.titleProperty().bind(viewModel.titleProperty());
+
         firstNameTextField.textProperty().bindBidirectional(viewModel.getPerson().firstNameProperty());
         bindValid(firstNameTextField, viewModel.firstNameValidProperty());
         lastNameTextField.textProperty().bindBidirectional(viewModel.getPerson().lastNameProperty());
@@ -112,15 +104,13 @@ public class PersonView extends AbstractParentView<PersonViewModel> {
     }
 
     @Override
-    protected void addHandlers(PersonViewModel viewModel) {
+    protected void addHandlers(PersonDialogViewModel viewModel) {
         super.addHandlers(viewModel);
-        addButton.setOnAction(e -> viewModel.addPerson());
-    }
-
-    @Override
-    protected void postInitialize(PersonViewModel viewModel) {
-        super.postInitialize(viewModel);
-        stage.show();
+        okButton.addEventFilter(ActionEvent.ACTION, event -> {
+            if (!viewModel.isPersonValid()) {
+                event.consume();
+            }
+        });
     }
 
     private void bindValid(TextField textField, BooleanProperty validProperty) {
@@ -128,4 +118,5 @@ public class PersonView extends AbstractParentView<PersonViewModel> {
                 .then("")
                 .otherwise("-fx-background-color: red, white; -fx-background-insets: 0, 1"));
     }
+
 }
