@@ -64,6 +64,10 @@ this state without knowing about specific controls in the View. For example, if 
 should be active or inactive, the View will update the control, but the View will not manage the logic that determines
 when the button should be enabled or disabled.
 
+Besides, the View may and should contain logic related to the visual behavior and layout of elements (presentation
+logic). This includes calculating positions and sizes, managing component arrangement (e.g., docking or resizing),
+handling animations, drag-and-drop operations, or other view-related interactions that depend on specific UI components.
+
 ViewModel — manages the state of UI elements without needing to know the implementation details of the user interface.
 ViewModel can also serve as a layer between the View and Model, obtaining data from the Model and preparing it for
 display in the View. It can transform the data from the model into a format suitable for UI presentation.
@@ -211,7 +215,7 @@ To build the library use standard Git and Maven commands:
 To run the demo execute the following commands in the root of the project:
 
     cd mvvm4fx-demo
-    mvn javafx:run -o
+    mvn javafx:run
 
 Please note, that debugger settings are in `mvvm4fx-demo/pom.xml` file.
 
