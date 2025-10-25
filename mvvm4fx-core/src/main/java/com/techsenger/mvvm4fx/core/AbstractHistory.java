@@ -34,11 +34,6 @@ public abstract class AbstractHistory<T extends AbstractComponentViewModel> impl
     }
 
     @Override
-    public void setDefaultValues() {
-
-    }
-
-    @Override
     public void restoreData(T viewModel) {
 
     }

@@ -19,18 +19,28 @@ package com.techsenger.mvvm4fx.core;
 import java.io.Serializable;
 
 /**
- * The history of the component contains last states that a user used. For example, it can be dialog sizes etc.
+ * Represents a serializable snapshot of a component's {@code ViewModel} state. A history object stores only the
+ * information that must persist between component sessions and excludes all transient or runtime aspects.
+ *
+ * <p>The {@code ViewModel} itself may contain both persistent and non-persistent values. It also defines default values
+ * for all of its properties, regardless of whether they are stored in the history or used only at runtime. The
+ * {@code ViewModel} owns the meaning of those defaults, while the history is responsible solely for persisting and
+ * restoring the subset of states that are marked as persistent.
+ *
+ * <p>The history defines the persistent structure of a component and acts as a container for all states that should be
+ * restored when the component is reinitialized. It is completely independent of the {@code ViewModel} and does not
+ * contain default values or presentation logic. Default values belong to the {@code ViewModel}, while the history
+ * merely reflects the states that were last saved.
+ *
+ * <p>It is the responsibility of the history to save and restore all persistent states of the {@code ViewModel} at the
+ * appropriate points in the component's lifecycle. When the component becomes deinitialized, the current states of the
+ * {@code ViewModel} are copied into the history. When the component is constructed again, the history restores those
+ * states back into the {@code ViewModel}. This deterministic synchronization ensures a consistent mapping between the
+ * runtime state and its persisted representation.
  *
  * @author Pavel Castornii
  */
 public interface ComponentHistory<T extends ComponentViewModel> extends Serializable {
-
-    /**
-     * If history hasn't been created yet, it can be created automatically. In this case this method is called
-     * to set default values.
-     *
-     */
-    void setDefaultValues();
 
     /**
      * Method called before the component is serialized. This can be used to prepare the object's state
