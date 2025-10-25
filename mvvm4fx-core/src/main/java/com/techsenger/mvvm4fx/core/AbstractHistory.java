@@ -22,6 +22,11 @@ package com.techsenger.mvvm4fx.core;
  */
 public abstract class AbstractHistory<T extends AbstractComponentViewModel> implements ComponentHistory<T> {
 
+    private boolean fresh = true;
+
+    public boolean isFresh() {
+        return fresh;
+    }
 
     @Override
     public void postDeserialize() {
@@ -40,7 +45,7 @@ public abstract class AbstractHistory<T extends AbstractComponentViewModel> impl
 
     @Override
     public void saveData(T viewModel) {
-
+        this.fresh = false;
     }
 
     @Override
@@ -50,6 +55,6 @@ public abstract class AbstractHistory<T extends AbstractComponentViewModel> impl
 
     @Override
     public void saveAppearance(T viewModel) {
-
+        this.fresh = false;
     }
 }

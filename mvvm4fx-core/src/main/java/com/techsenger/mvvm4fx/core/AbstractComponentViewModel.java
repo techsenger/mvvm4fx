@@ -51,25 +51,30 @@ public abstract class AbstractComponentViewModel implements ComponentViewModel {
             var policy = getHistoryPolicy();
             if (state.get() == ComponentState.CONSTRUCTED) {
                 logger.debug("History policy on constucting: {}", policy);
-                switch (policy) {
-                    case DATA:
-                        getOrRequestHistory().restoreData(this);
-                        postHistoryRestore();
-                        break;
-                    case APPEARANCE:
-                        getOrRequestHistory().restoreAppearance(this);
-                        postHistoryRestore();
-                        break;
-                    case ALL:
-                        var h = getOrRequestHistory();
-                        h.restoreData(this);
-                        h.restoreAppearance(this);
-                        postHistoryRestore();
-                        break;
-                    case NONE:
-                        break;
-                    default:
-                        throw new AssertionError();
+                ComponentHistory history = null;
+                if (policy != NONE) {
+                    history = getOrRequestHistory();
+                    if (history.isFresh()) {
+                        logFreshHistory();
+                    } else {
+                        switch (policy) {
+                            case DATA:
+                                history.restoreData(this);
+                                postHistoryRestore();
+                                break;
+                            case APPEARANCE:
+                                history.restoreAppearance(this);
+                                postHistoryRestore();
+                                break;
+                            case ALL:
+                                history.restoreData(this);
+                                history.restoreAppearance(this);
+                                postHistoryRestore();
+                            break;
+                            default:
+                                throw new AssertionError();
+                        }
+                    }
                 }
             } else if (state.get() == ComponentState.DEINITIALIZED) {
                 logger.debug("History policy on deinitializing: {}", policy);
@@ -154,5 +159,9 @@ public abstract class AbstractComponentViewModel implements ComponentViewModel {
             this.historyProvided = true;
         }
         return this.history;
+    }
+
+    private void logFreshHistory() {
+        logger.debug("History is fresh. Skipping restoration");
     }
 }
