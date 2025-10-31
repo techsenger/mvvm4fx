@@ -30,12 +30,16 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author Pavel Castornii
  */
 public class PersonRegistryViewModel extends AbstractParentViewModel {
+
+    private static final Logger logger = LoggerFactory.getLogger(PersonRegistryViewModel.class);
 
     private final PersonService service;
 
@@ -50,7 +54,11 @@ public class PersonRegistryViewModel extends AbstractParentViewModel {
     public PersonRegistryViewModel(PersonService service) {
         this.service = service;
         title.bind(Bindings.size(persons).asString("Person Registry (%d Items)"));
-        selectedPerson.addListener((ov, oldV, newV) -> removeDisabled.set(newV == null));
+        selectedPerson.addListener((ov, oldV, newV) -> {
+            removeDisabled.set(newV == null);
+            // log message example with component meta
+            logger.debug("{} Selected person property changed", getDescriptor().getLogPrefix());
+        });
     }
 
     @Override
