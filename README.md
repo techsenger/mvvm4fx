@@ -5,6 +5,7 @@ the necessary interfaces and base class implementations for creating components,
 pattern. Examples of components include tabs, dialog windows, toolbars, image viewers, help pages, and more.
 
 ## Table of Contents
+* [Overview](#overview)
 * [Features](#features)
 * [MVVM](#mvvm)
     * [What is MVVM?](#what-is-mvvm)
@@ -21,6 +22,24 @@ pattern. Examples of components include tabs, dialog windows, toolbars, image vi
 * [License](#license)
 * [Contributing](#contributing)
 * [Support Us](#support-us)
+
+## Overview <a name="overview"></a>
+
+MVVM4FX reimagines the Model–View–ViewModel pattern for JavaFX as a component-based, extensible platform designed
+around clarity, modularity, and the KISS principle. Each component exists as a self-contained unit composed of a View,
+ViewModel, and Descriptor, optionally extended with Mediator and History.
+
+The framework enforces a strict separation between presentation, logic, and identity. The View defines the visual
+structure and behavior; the ViewModel encapsulates logic and state; the Descriptor holds the component’s technical
+identity; the Mediator enables controlled interaction between layers; and the History preserves continuity across sessions.
+
+At its core, MVVM4FX follows the KISS principle – every class, method, and abstraction exists only for a clear reason,
+avoiding unnecessary complexity or dependencies. This simplicity is deliberate: it keeps the architecture transparent,
+predictable, and easy to extend.
+
+By combining conceptual clarity with structural discipline, MVVM4FX achieves both architectural purity and practical
+flexibility — a balance where components remain independent yet fully interoperable. It is not a minimalistic
+abstraction but a complete design system for building coherent, maintainable, and intelligent JavaFX applications.
 
 ## Features <a name="features"></a>
 
@@ -118,12 +137,12 @@ from the `ComponentHistory` to the `ComponentViewModel`, while during deinitiali
 `ComponentViewModel` is saved to the `ComponentHistory`. The volume of state history that is restored and saved is
 configured via the `HistoryPolicy` enum.
 
-The `ComponentBridge` is an interface that allows the `ComponentViewModel` to request the `ComponentView` to perform
+The `ComponentMediator` is an interface that allows the `ComponentViewModel` to request the `ComponentView` to perform
 specific actions. These actions are typically related to creating or removing other components — operations that cannot
 be executed solely within the `ComponentViewModel`. It is important to emphasize that the `ComponentViewModel` must
 never hold a direct reference to the `ComponentView`, and the use of this interface does not violate this rule.
-The bridge can be created and set in the `AbstractParentViewModel` either by overriding the
-`AbstractParentView#createBridge()` method or by using `AbstractParentViewModel#setBridge(ComponentBridge)`
+The mediator can be created and set in the `AbstractParentViewModel` either by overriding the
+`AbstractParentView#createMediator()` method or by using `AbstractParentViewModel#setMediator(ComponentMediator)`
 
 ### Component Lifecycle <a name="component-lifecycle"></a>
 

@@ -20,11 +20,11 @@ package com.techsenger.mvvm4fx.core;
  *
  * @author Pavel Castornii
  */
-public abstract class AbstractComponentBridge<T extends ParentView<?>> implements ComponentBridge {
+public abstract class AbstractComponentMediator<T extends ParentView<?>> implements ComponentMediator {
 
     private final T view;
 
-    public AbstractComponentBridge(T view) {
+    public AbstractComponentMediator(T view) {
         this.view = view;
     }
 

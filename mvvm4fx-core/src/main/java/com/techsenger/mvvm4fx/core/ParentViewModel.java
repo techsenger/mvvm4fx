@@ -49,9 +49,14 @@ public interface ParentViewModel extends ComponentViewModel {
     SubtreeIterator<ParentViewModel> breadthFirstIterator();
 
     /**
-     * Returns component bridge that can be used for managing other components.
+     * Returns the mediator associated with this component.
      *
-     * @return
+     * <p>The {@code ComponentMediator} acts as an intermediary between the {@code ComponentViewModel} and its
+     * corresponding {@code ComponentView}. It allows the ViewModel to perform view-related operations — such as
+     * creating or removing components, displaying dialogs, or updating layout — without holding a direct reference
+     * to the View.
+     *
+     * @return the mediator responsible for performing view-side actions on behalf of this component
      */
-    ComponentBridge getBridge();
+    ComponentMediator getMediator();
 }

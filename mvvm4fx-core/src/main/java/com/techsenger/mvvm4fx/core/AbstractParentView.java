@@ -35,7 +35,7 @@ public abstract class AbstractParentView<T extends AbstractParentViewModel> exte
 
     public AbstractParentView(T viewModel) {
         super(viewModel);
-        viewModel.setBridge(createBridge());
+        viewModel.setMediator(createMediator());
         childrenSynchronizer = new ListSynchronizer<ChildView<?>, ChildViewModel>(children,
                 viewModel.getModifiableChildren(), (v) -> v.getViewModel());
     }
@@ -68,10 +68,17 @@ public abstract class AbstractParentView<T extends AbstractParentViewModel> exte
     }
 
     /**
-     * Creates bridge that then is set to view model. Default implementation provides null.
-     * @return
+     * Creates a new {@link ComponentMediator} instance for this component.
+     *
+     * <p>This method is invoked during the component's construction phase and allows subclasses to provide a custom
+     * mediator implementation that defines how the {@code ComponentViewModel} interacts with its {@code ComponentView}.
+     * The created mediator is then automatically assigned to the ViewModel.
+     *
+     * <p>The default implementation returns {@code null}, meaning the component does not use a mediator by default.
+     *
+     * @return a newly created {@code ComponentMediator}, or {@code null} if none is required
      */
-    protected ComponentBridge createBridge() {
+    protected ComponentMediator createMediator() {
         return null;
     }
 

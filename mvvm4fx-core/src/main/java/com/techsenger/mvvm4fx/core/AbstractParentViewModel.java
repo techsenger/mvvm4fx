@@ -31,15 +31,15 @@ public abstract class AbstractParentViewModel extends AbstractComponentViewModel
     private final ObservableList<ChildViewModel> children =
             FXCollections.unmodifiableObservableList(modifiableChildren);
 
-    private ComponentBridge bridge;
+    private ComponentMediator mediator;
 
     public AbstractParentViewModel() {
         super();
     }
 
     @Override
-    public ComponentBridge getBridge() {
-        return this.bridge;
+    public ComponentMediator getMediator() {
+        return this.mediator;
     }
 
     @Override
@@ -69,8 +69,8 @@ public abstract class AbstractParentViewModel extends AbstractComponentViewModel
         };
     }
 
-    public void setBridge(ComponentBridge bridge) {
-        this.bridge = bridge;
+    public void setMediator(ComponentMediator mediator) {
+        this.mediator = mediator;
     }
 
     ObservableList<ChildViewModel> getModifiableChildren() {

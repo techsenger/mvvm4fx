@@ -34,6 +34,6 @@ package com.techsenger.mvvm4fx.core;
  *
  * @author Pavel Castornii
  */
-public interface ComponentBridge {
+public interface ComponentMediator {
 
 }
