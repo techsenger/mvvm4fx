@@ -17,15 +17,18 @@
 package com.techsenger.mvvm4fx.core;
 
 /**
- * This interface is used by the ParentViewModel to add or remove child components (such as tabs, panes, dialogs, etc.).
- * It provides a bridge for managing these components. The component bridge is created in the View and has a reference
- * to the View, but it does not provide a direct reference to the ViewModel.
+ * Defines a mediator interface used by the {@code ParentViewModel} to perform view-related operations,
+ * such as adding or removing child components (tabs, panes, dialogs, etc.).
  *
- * <p>For example, to show a dialog, the bridge implementation can include a method like the following:</p>
+ * <p>The {@code ComponentMediator} acts as an intermediary between the {@code ComponentViewModel} and its corresponding
+ * {@code ComponentView}. It is created within the View layer and maintains a reference to the View, allowing the
+ * ViewModel to request UI actions without holding a direct reference to the View itself.
+ *
+ * <p>For example, to display a dialog, the mediator implementation might define a method such as:
  *
  * <pre>
  * void openDialog(DialogViewModel dialogViewModel) {
- *     //alternatively, this logic can be handled within the View itself
+ *     // Alternatively, this logic can be encapsulated inside the View itself.
  *     DialogView dialogView = new DialogView(dialogViewModel);
  *     dialogView.initialize();
  *     getView().openDialog(dialogView);

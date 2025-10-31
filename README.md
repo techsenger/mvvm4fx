@@ -124,7 +124,7 @@ provided API, such as dialogs or popup windows. This limitation exists because t
 elements within its own scope and awareness.
 
 In addition to the `ComponentViewModel` and `ComponentView`, a component always has a `ComponentDescriptor` and may
-include two optional classes: `ComponentHistory` and `ComponentBridge`.
+include two optional classes: `ComponentMediator` and `ComponentHistory`.
 
 The `ComponentDescriptor` represents the internal metadata and platform-level state of a component. The descriptor
 acts as a technical identity card, containing all framework-related information while keeping it completely separate
