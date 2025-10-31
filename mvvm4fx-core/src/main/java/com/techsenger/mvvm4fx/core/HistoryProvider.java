@@ -17,8 +17,6 @@
 package com.techsenger.mvvm4fx.core;
 
 /**
- * This provider can be called only once throughout the entire lifecycle of the component if the history is required
- * at some point during execution according to the {@link HistoryPolicy}.
  *
  * @author Pavel Castornii
  */

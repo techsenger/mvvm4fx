@@ -20,10 +20,6 @@ import static com.techsenger.mvvm4fx.core.HistoryPolicy.ALL;
 import static com.techsenger.mvvm4fx.core.HistoryPolicy.APPEARANCE;
 import static com.techsenger.mvvm4fx.core.HistoryPolicy.DATA;
 import static com.techsenger.mvvm4fx.core.HistoryPolicy.NONE;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.ReadOnlyObjectProperty;
-import javafx.beans.property.ReadOnlyObjectWrapper;
-import javafx.beans.property.SimpleObjectProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,27 +31,23 @@ public abstract class AbstractComponentViewModel implements ComponentViewModel {
 
     private static final Logger logger = LoggerFactory.getLogger(AbstractComponentViewModel.class);
 
-    private final ReadOnlyObjectWrapper<ComponentState> state =
-            new ReadOnlyObjectWrapper<>(ComponentState.UNCONSTRUCTED);
-
-    private final ObjectProperty<HistoryPolicy> historyPolicy = new SimpleObjectProperty<>(HistoryPolicy.NONE);
+    private final ComponentDescriptor descriptor;
 
     private HistoryProvider historyProvider;
 
     private ComponentHistory<?> history;
 
-    private boolean historyProvided;
-
     public AbstractComponentViewModel() {
-        state.addListener((ov, oldV, newV) -> {
-            var policy = getHistoryPolicy();
-            if (state.get() == ComponentState.CONSTRUCTED) {
-                logger.debug("History policy on constucting: {}", policy);
+        this.descriptor = createDescriptor();
+        this.descriptor.stateProperty().addListener((ov, oldV, newV) -> {
+            var policy = this.descriptor.getHistoryPolicy();
+            if (this.descriptor.getState() == ComponentState.CONSTRUCTED) {
+                logger.debug("{} History policy on constucting: {}", this.descriptor.getLogPrefix(), policy);
                 ComponentHistory history = null;
                 if (policy != NONE) {
                     history = getOrRequestHistory();
                     if (history.isFresh()) {
-                        logFreshHistory();
+                        logger.debug("{} History is fresh. Skipping restoration", this.descriptor.getLogPrefix());
                     } else {
                         switch (policy) {
                             case DATA:
@@ -76,8 +68,8 @@ public abstract class AbstractComponentViewModel implements ComponentViewModel {
                         }
                     }
                 }
-            } else if (state.get() == ComponentState.DEINITIALIZED) {
-                logger.debug("History policy on deinitializing: {}", policy);
+            } else if (this.descriptor.getState() == ComponentState.DEINITIALIZED) {
+                logger.debug("{} History policy on deinitializing: {}", this.descriptor.getLogPrefix(), policy);
                 //The data and the appearance are saved to the history during the deinitialization of the component,
                 //not while the component is running, as this feature is rarely needed but significantly complicates
                 //the code.
@@ -106,36 +98,17 @@ public abstract class AbstractComponentViewModel implements ComponentViewModel {
     }
 
     @Override
-    public ComponentState getState() {
-        return this.state.get();
+    public ComponentDescriptor getDescriptor() {
+        return descriptor;
     }
 
     @Override
-    public ReadOnlyObjectProperty<ComponentState> stateProperty() {
-        return state.getReadOnlyProperty();
-    }
-
-    @Override
-    public ObjectProperty<HistoryPolicy> historyPolicyProperty() {
-        return historyPolicy;
-    }
-
-    @Override
-    public HistoryPolicy getHistoryPolicy() {
-        return historyPolicy.get();
-    }
-
-    @Override
-    public void setHistoryPolicy(HistoryPolicy policy) {
-        historyPolicy.set(policy);
+    public HistoryProvider getHistoryProvider() {
+        return historyProvider;
     }
 
     public void setHistoryProvider(HistoryProvider historyProvider) {
         this.historyProvider = historyProvider;
-    }
-
-    public HistoryProvider getHistoryProvider() {
-        return historyProvider;
     }
 
     protected void postHistoryRestore() {
@@ -146,22 +119,15 @@ public abstract class AbstractComponentViewModel implements ComponentViewModel {
 
     }
 
-    ReadOnlyObjectWrapper<ComponentState> stateWrapper() {
-        return state;
-    }
+    protected abstract ComponentDescriptor createDescriptor();
 
     private ComponentHistory getOrRequestHistory() {
-        if (!this.historyProvided) {
+        if (this.history == null) {
             if (this.historyProvider == null) {
                 throw new NullPointerException("No history provider");
             }
             this.history = this.historyProvider.provide();
-            this.historyProvided = true;
         }
         return this.history;
-    }
-
-    private void logFreshHistory() {
-        logger.debug("History is fresh. Skipping restoration");
     }
 }

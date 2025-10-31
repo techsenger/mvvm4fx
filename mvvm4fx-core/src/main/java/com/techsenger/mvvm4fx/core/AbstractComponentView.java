@@ -31,7 +31,7 @@ public abstract class AbstractComponentView<T extends AbstractComponentViewModel
 
     public AbstractComponentView(T viewModel) {
         this.viewModel = viewModel;
-        this.viewModel.stateWrapper().set(ComponentState.CONSTRUCTED);
+        this.viewModel.getDescriptor().stateWrapper().set(ComponentState.CONSTRUCTED);
     }
 
     @Override
@@ -44,8 +44,9 @@ public abstract class AbstractComponentView<T extends AbstractComponentViewModel
      */
     @Override
     public final void initialize() {
+        var descriptor = this.viewModel.getDescriptor();
         try {
-            if (this.viewModel.stateWrapper().get() != ComponentState.CONSTRUCTED) {
+            if (descriptor.stateWrapper().get() != ComponentState.CONSTRUCTED) {
                 throw new IllegalStateException("Unexpected state of the component");
             }
             preInitialize(viewModel);
@@ -53,12 +54,11 @@ public abstract class AbstractComponentView<T extends AbstractComponentViewModel
             bind(viewModel);
             addListeners(viewModel);
             addHandlers(viewModel);
-            this.viewModel.stateWrapper().set(ComponentState.INITIALIZED);
-            logger.debug("Initialized component: {}", viewModel.getKey().toString());
+            descriptor.stateWrapper().set(ComponentState.INITIALIZED);
+            logger.debug("{} Initialized component", descriptor.getLogPrefix());
             postInitialize(viewModel);
         } catch (Exception ex) {
-            logger.error("Error initializing {} - {}", this.getClass().getName(),
-                Integer.toHexString(this.hashCode()), ex);
+            logger.error("{} Error initializing", descriptor.getLogPrefix(), ex);
         }
     }
 
@@ -67,8 +67,9 @@ public abstract class AbstractComponentView<T extends AbstractComponentViewModel
      */
     @Override
     public final void deinitialize() {
+        var descriptor = this.viewModel.getDescriptor();
         try {
-            if (this.viewModel.stateWrapper().get() != ComponentState.INITIALIZED) {
+            if (descriptor.stateWrapper().get() != ComponentState.INITIALIZED) {
                 throw new IllegalStateException("Unexpected state of the component");
             }
             preDeinitialize(viewModel);
@@ -76,12 +77,11 @@ public abstract class AbstractComponentView<T extends AbstractComponentViewModel
             removeListeners(viewModel);
             unbind(viewModel);
             unbuild(viewModel);
-            this.viewModel.stateWrapper().set(ComponentState.DEINITIALIZED);
-            logger.debug("Deinitialized component: {}", viewModel.getKey().toString());
+            descriptor.stateWrapper().set(ComponentState.DEINITIALIZED);
+            logger.debug("{} Deinitialized component", descriptor.getLogPrefix());
             postDeinitialize(viewModel);
         } catch (Exception ex) {
-            logger.error("Error deinitializing {} - {}", this.getClass().getName(),
-                Integer.toHexString(this.hashCode()), ex);
+            logger.error("{} Error deinitializing", descriptor.getLogPrefix(), ex);
         }
     }
 

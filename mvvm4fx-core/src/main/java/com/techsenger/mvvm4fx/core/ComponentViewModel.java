@@ -16,54 +16,13 @@
 
 package com.techsenger.mvvm4fx.core;
 
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.ReadOnlyObjectProperty;
-
 /**
  *
  * @author Pavel Castornii
  */
 public interface ComponentViewModel {
 
-    /**
-     * Returns the key of the component.
-     *
-     * @return
-     */
-    ComponentKey getKey();
+    ComponentDescriptor getDescriptor();
 
-    /**
-     * Returns the state of the component.
-     * @return
-     */
-    ComponentState getState();
-
-    /**
-     * Returns the state property of the component.
-     *
-     * @return
-     */
-    ReadOnlyObjectProperty<ComponentState> stateProperty();
-
-    /**
-     * Returns the property for the history policy.
-     *
-     * @return
-     */
-    ObjectProperty<HistoryPolicy> historyPolicyProperty();
-
-    /**
-     * Returns the history policy.
-     *
-     * @return
-     */
-    HistoryPolicy getHistoryPolicy();
-
-    /**
-     * Sets the history policy to the specified value.
-     *
-     * @param policy the history policy to set.
-     */
-    void setHistoryPolicy(HistoryPolicy policy);
-
+    HistoryProvider getHistoryProvider();
 }

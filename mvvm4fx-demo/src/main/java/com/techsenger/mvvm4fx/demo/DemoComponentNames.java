@@ -16,22 +16,19 @@
 
 package com.techsenger.mvvm4fx.demo;
 
-import com.techsenger.mvvm4fx.core.ComponentKey;
+import com.techsenger.mvvm4fx.core.ComponentName;
 
 /**
  *
  * @author Pavel Castornii
  */
-public class DemoKey implements ComponentKey {
+public final class DemoComponentNames {
 
-    private final String name;
+    public static final ComponentName PERSON_REGISTRY = new DemoComponentName("PersonRegistry");
 
-    public DemoKey(String name) {
-        this.name = name;
-    }
+    public static final ComponentName PERSON_DIALOG = new DemoComponentName("PersonDialog");
 
-    @Override
-    public String toString() {
-        return name;
+    private DemoComponentNames() {
+        //empty
     }
 }

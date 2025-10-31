@@ -17,7 +17,7 @@
 package com.techsenger.mvvm4fx.demo;
 
 import com.techsenger.mvvm4fx.core.AbstractParentViewModel;
-import com.techsenger.mvvm4fx.core.ComponentKey;
+import com.techsenger.mvvm4fx.core.ComponentDescriptor;
 import com.techsenger.mvvm4fx.demo.model.Person;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -41,8 +41,8 @@ public class PersonDialogViewModel extends AbstractParentViewModel {
     private final BooleanProperty ageValid = new SimpleBooleanProperty(true);
 
     @Override
-    public ComponentKey getKey() {
-        return DemoKeys.PERSON_DIALOG;
+    protected ComponentDescriptor createDescriptor() {
+        return new ComponentDescriptor(DemoComponentNames.PERSON_DIALOG);
     }
 
     StringProperty titleProperty() {

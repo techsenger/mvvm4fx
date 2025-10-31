@@ -17,7 +17,7 @@
 package com.techsenger.mvvm4fx.demo;
 
 import com.techsenger.mvvm4fx.core.AbstractParentViewModel;
-import com.techsenger.mvvm4fx.core.ComponentKey;
+import com.techsenger.mvvm4fx.core.ComponentDescriptor;
 import com.techsenger.mvvm4fx.demo.model.Person;
 import com.techsenger.mvvm4fx.demo.model.PersonService;
 import java.util.Optional;
@@ -54,8 +54,8 @@ public class PersonRegistryViewModel extends AbstractParentViewModel {
     }
 
     @Override
-    public ComponentKey getKey() {
-        return DemoKeys.PERSON_REGISTRY;
+    protected ComponentDescriptor createDescriptor() {
+        return new ComponentDescriptor(DemoComponentNames.PERSON_REGISTRY);
     }
 
     ObservableList<Person> getPersons() {
