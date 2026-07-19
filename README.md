@@ -14,7 +14,7 @@ tree of components where a component is a fundamental, self-contained building b
 provides a specific piece of functionality and enables user interaction. This approach enables a clear and consistent
 structure, predictable dynamic composition, and controlled lifecycle management.
 
-As a real example of using this framework, see [TabShell](https://github.com/techsenger/tabshell) project.
+As a real example of using this framework, see [ShellFX](https://github.com/techsenger/shellfx) project.
 
 ## Table of Contents
 * [Overview](#overview)
