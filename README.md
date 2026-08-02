@@ -29,7 +29,7 @@ As a real example of using this framework, see [ShellFX](https://github.com/tech
         * [MVVM Pattern Disadvantages](#patterns-mvvm-disadvantages)
     * [MVC vs MVP vs MVVM](#patterns-mvc-mvp-mvvm)
         * [Architecture Overview](#patterns-arch-overview)
-        * [State vs Commands](#patterns-state-vs-commands)
+        * [State vs Actions](#patterns-state-vs-actions)
         * [Control Flow](#patterns-control-flow)
         * [Testability](#patterns-testability)
         * [Choosing the Right Pattern](#patterns-right-choice)
@@ -270,13 +270,14 @@ unlike MVC. In MVP, the state is stored in the `Presenter`, while in MVVM, the s
 This additional abstraction makes both patterns significantly more complex than MVC, but also improves separation of
 responsibilities.
 
-#### State vs Commands <a name="patterns-state-vs-commands"></a>
+#### State vs Actions <a name="patterns-state-vs-actions"></a>
 
 MVVM naturally aligns with declarative UI frameworks and state-based rendering models, which makes it particularly well
-suited for CRUD-style screens where the UI is a deterministic projection of state. However, this advantage is
-limited to scenarios where the UI behavior is state-driven.
+suited for CRUD-style screens where the UI is a deterministic projection of state. In such scenarios, the main
+responsibility of the `ViewModel` is to expose state that the `View` can observe and render. However, this advantage is
+limited to scenarios where the UI behavior is primarily state-driven.
 
-When the interaction model becomes algorithm-driven — for example:
+When the interaction model becomes action-driven — for example:
 
 - searching and navigating through a document,
 - stepping through search results,
@@ -285,10 +286,11 @@ When the interaction model becomes algorithm-driven — for example:
 
 the logic no longer maps naturally to state. Attempting to express such behavior purely through `ViewModel` state
 often results in complex derived properties, one-shot events, numerous listeners, and additional abstractions for
-representing commands.
+representing actions.
 
 MVP, on the other hand, allows interaction-heavy and algorithmic logic to be expressed directly through explicit
-method calls, making it a natural fit for scenarios where UI behavior cannot be modeled as state alone.
+method calls in the `Presenter`. This makes it a natural fit for scenarios where UI behavior cannot be modeled as
+state alone, and where the execution flow is better represented as a sequence of interactions.
 
 #### Control Flow <a name="patterns-control-flow"></a>
 
