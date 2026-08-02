@@ -28,6 +28,11 @@ As a real example of using this framework, see [ShellFX](https://github.com/tech
         * [MVVM Pattern Advantages](#patterns-mvvm-advantages)
         * [MVVM Pattern Disadvantages](#patterns-mvvm-disadvantages)
     * [MVC vs MVP vs MVVM](#patterns-mvc-mvp-mvvm)
+        * [Architecture Overview](#patterns-arch-overview)
+        * [State vs Commands](#patterns-state-vs-commands)
+        * [Control Flow](#patterns-control-flow)
+        * [Testability](#patterns-testability)
+        * [Choosing the Right Pattern](#patterns-right-choice)
 * [Templates](#templates)
     * [Component](#templates-component)
         * [Component Descriptor](#templates-component-descriptor)
@@ -252,43 +257,64 @@ properties or special methods for performing actions, or when using controls fro
 ### MVC vs MVP vs MVVM <a name="patterns-mvc-mvp-mvvm"></a>
 
 Each of the discussed patterns has its own strengths and weaknesses, and the choice of architecture should be
-driven by the project’s requirements and the developer’s preferences.
+driven by the project's requirements and the developer's preferences.
+
+#### Architecture Overview <a name="patterns-arch-overview"></a>
 
 MVC provides maximum control and is very simple to implement, but it has a serious drawback — MVC tends to mix
 presentation and interaction logic inside the `Controller`, which often leads to tightly coupled and harder-to-test code.
-For this reason, the following analysis will focus only on MVP and MVVM.
+For this reason, the following analysis focuses only on MVP and MVVM.
 
 MVP and MVVM are similar in that both patterns introduce an explicit representation of UI state outside of the `View`,
 unlike MVC. In MVP, the state is stored in the `Presenter`, while in MVVM, the state is stored in the `ViewModel`.
-It is worth noting that this characteristic makes both patterns significantly more complex compared to MVC.
+This additional abstraction makes both patterns significantly more complex than MVC, but also improves separation of
+responsibilities.
+
+#### State vs Commands <a name="patterns-state-vs-commands"></a>
 
 MVVM naturally aligns with declarative UI frameworks and state-based rendering models, which makes it particularly well
 suited for CRUD-style screens where the UI is a deterministic projection of state. However, this advantage is
 limited to scenarios where the UI behavior is state-driven.
 
 When the interaction model becomes algorithm-driven — for example:
+
 - searching and navigating through a document,
 - stepping through search results,
 - managing focus, selection, scrolling, or cursor movement,
 - handling multi-step or temporal interactions,
 
 the logic no longer maps naturally to state. Attempting to express such behavior purely through `ViewModel` state
-often results in complex derived properties, numerous listeners, and implicit control flow that is difficult to
-reason about and debug.
+often results in complex derived properties, one-shot events, numerous listeners, and additional abstractions for
+representing commands.
 
-MVP, on the other hand, allows interaction-heavy and algorithmic logic. So, it remains effective in scenarios where
-UI behavior cannot be naturally modeled as state.
+MVP, on the other hand, allows interaction-heavy and algorithmic logic to be expressed directly through explicit
+method calls, making it a natural fit for scenarios where UI behavior cannot be modeled as state alone.
 
-From a testability perspective, MVVM has an advantage over MVP because the `ViewModel` is an ideal unit for testing.
-In contrast, in MVP you need to mock the `View` in every `Presenter` test, which introduces boilerplate.
+#### Control Flow <a name="patterns-control-flow"></a>
 
-Conceptually, MVVM is centered around modeling UI as a projection of state, while MVP models UI behavior as an explicit
-sequence of interactions. The more deterministic and state-driven the UI is, the more natural MVVM becomes. The
-more procedural and interaction-driven it is, the more natural MVP becomes.
+Reactive state propagation naturally distributes application logic across property bindings, listeners, and observable
+collections. As the application grows, a single state change may indirectly trigger multiple updates in different
+parts of the system, making it increasingly difficult to understand the complete execution path and identify the
+origin of a particular behavior during debugging.
 
-Thus, when choosing between MVP and MVVM, it is also important to consider the nature of the application: MVVM may
-be more suitable for primarily data-driven interfaces (e.g., forms and dashboards), while MVP often fits better
-for action-driven scenarios (e.g., navigation and complex editing tools).
+MVP keeps the workflow explicit. User interactions are processed sequentially inside the `Presenter`, which invokes
+the required operations directly on the model and the view. This results in a linear, predictable execution flow that
+is generally easier to trace, debug, and maintain, especially in interaction-heavy desktop applications.
+
+#### Testability <a name="patterns-testability"></a>
+
+From a testability perspective, MVVM has an advantage because the `ViewModel` is an ideal unit for isolated testing.
+In contrast, MVP requires mocking the `View` in `Presenter` tests, which introduces additional boilerplate.
+
+#### Choosing the Right Pattern <a name="patterns-right-choice"></a>
+
+Conceptually, MVVM is centered around modeling the UI as a projection of state, while MVP models UI behavior as an
+explicit sequence of interactions. The more deterministic and state-driven the UI is, the more natural MVVM becomes.
+The more procedural and interaction-driven it is, the more natural MVP becomes.
+
+Therefore, when choosing between MVP and MVVM, it is important to consider the nature of the application. MVVM is
+often better suited for data-driven interfaces such as forms and dashboards, whereas MVP tends to fit better for
+interaction-heavy applications such as file managers, IDEs, navigation systems, and complex editing tools.
 
 ## Templates <a name="templates"></a>
 
