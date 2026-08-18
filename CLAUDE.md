@@ -1,0 +1,219 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Project Overview
+
+PatternFX is a compact, component-oriented, modular framework providing architectural pattern templates
+(MVP and MVVM) for building JavaFX applications. Each template is a complete implementation of one pattern,
+including lifecycle management, dynamic composition, and component history — not just a conceptual guideline.
+Mixing templates within a single application is unsupported by design. Full conceptual documentation (pattern
+comparisons, when to create a component, complete worked examples) lives in `README.md` — read it before making
+non-trivial design changes to `patternfx-mvp` or `patternfx-mvvm`, since the class responsibilities are only
+fully explained there.
+
+## Module Layout
+
+Reactor build with four Maven modules (Java 25 / JavaFX 25, uses the Java module system):
+
+- **patternfx-core** (`com.techsenger.patternfx.core`) — pattern-agnostic building blocks shared by both
+  templates: `AbstractDescriptor`/`ObservableDescriptor` (component metadata/state, kept separate from
+  business data), `ComponentState` (CREATING → INITIALIZING → INITIALIZED → DEINITIALIZING → DEINITIALIZED),
+  `AbstractComponentHistory`/`HistoryProvider` (lazy, per-component state persistence),
+  `ComponentName`/`ComponentGroup`, and `TreeIterator` (breadth/depth-first traversal of the component tree).
+- **patternfx-mvp** (`com.techsenger.patternfx.mvp`, depends on core) — the MVP template. Presenter owns the
+  `Descriptor` and lifecycle; `View`/`FxView` are passive; `Composer` centralizes child/derived component
+  creation. Type hierarchy: `Presenter` → `ParentPresenter` (+ `ParentPort`) → `ChildPresenter` (+ `ChildPort`),
+  with `AbstractPresenter` → `AbstractParentPresenter` → `AbstractChildPresenter` as the base implementations.
+  Mirrored on the view side: `View` → `FxView` → `ParentFxView` → `ChildFxView`, implemented by
+  `AbstractView` → `AbstractFxView` → `AbstractParentFxView` → `AbstractChildFxView`. `Presenter` instances are
+  never shared directly between components — cross-component communication goes through a `Port`.
+- **patternfx-mvvm** (`com.techsenger.patternfx.mvvm`, depends on core) — the MVVM template. `ViewModel` owns
+  the `Descriptor`; `View` drives the lifecycle and binds declaratively to `ViewModel` state (see
+  `BindingUtils`); `Composer` again centralizes composition. Hierarchy: `ViewModel` → `ParentViewModel` →
+  `ChildViewModel`, with `AbstractViewModel` → `AbstractParentViewModel` → `AbstractChildViewModel`. Views:
+  `View` → `ParentView` → `ChildView`, with `AbstractView` → `AbstractParentView` → `AbstractChildView`.
+- **patternfx-demo** (`com.techsenger.patternfx.demo`, depends on core + mvp + mvvm) — runnable JavaFX app
+  demonstrating both templates side by side (`demo.mvp` and `demo.mvvm` packages), each with an equivalent
+  Registry/Report/Dialog component set built from the same `demo.model` (Person/PersonService/PersonValidator).
+  Entry point is `Demo`, which delegates to `MvpRunner` or `MvvmRunner`.
+
+In both templates, base `Component`/`Presenter`/`ViewModel` types are for isolated windows/dialogs with no
+tree participation; `Parent*` types add child-management; `Child*` types add a parent reference and full
+composition-tree integration. All templates enforce the Unidirectional Hierarchy Rule: no circular parent/child
+relationships in the component tree (which is a logical ownership tree, independent of the JavaFX scene graph).
+
+Initialization/deinitialization in both templates follows a fixed three-phase template method:
+`preInitialize()`/`preDeinitialize()` (overridable) → fixed core phase (build/unbuild, bind/unbind, add/remove
+listeners, add/remove handlers) → `postInitialize()`/`postDeinitialize()` (overridable).
+
+Null-safety is enforced at compile time: every package is `@NullMarked` (from `com.techsenger.annotations`),
+and the build fails (`-Werror`) on NullAway violations.
+
+## Common Commands
+
+Full build — compiles, runs unit + integration tests, and checkstyle (from repo root):
+```
+mvn clean install
+```
+
+Unit tests only, no checkstyle/integration tests:
+```
+mvn clean install -P unit-tests
+```
+
+Run a single test class or method (surefire):
+```
+mvn -pl patternfx-core test -Dtest=SomeTestClass
+mvn -pl patternfx-core test -Dtest=SomeTestClass#someMethod
+```
+(swap `patternfx-core` for `patternfx-mvp`/`patternfx-mvvm`/`patternfx-demo` as needed; `-pl` targets a
+single module in this multi-module reactor.)
+
+Checkstyle only:
+```
+mvn checkstyle:check
+```
+
+Run the demo app (from `patternfx-demo/`; debugger settings live in that module's `pom.xml`):
+```
+cd patternfx-demo
+mvn javafx:run
+```
+
+Note: there are currently no test sources under any module's `src/test/java` — `src/test` directories exist
+but are empty.
+
+## Build Configuration Notes
+
+- The parent POM (`maven-root`, an external artifact resolved from Maven Central / the project's Repsy
+  snapshot repo) supplies the checkstyle config, compiler flags, and profiles (`default`, `unit-tests`,
+  `integration-tests`, `release`, `snapshot`) — it is not part of this repo.
+  javac is invoked with `-Werror` and the ErrorProne + NullAway annotation processors; compilation fails on
+  raw-type/unchecked warnings and on nullability violations.
+- `patternfx-demo` is excluded from publishing (`publishing.plugin.exclusions`) since it's example code, not
+  a library artifact.
+
+## Language
+
+Everything in the project is written in English — README, documentation, Javadoc, code comments, commit
+messages, etc. Always — regardless of what language the conversation with the assistant happens in.
+
+## Member ordering
+
+Not caught by Checkstyle (no `DeclarationOrder` module in the config) — must be applied by hand on every
+edit, not just when writing new files.
+
+Within a class/interface, members are sorted by three nested keys, each answering a different question and
+breaking ties in the one before it:
+
+1. **Scope — static vs. instance.** Does this member belong to the class or to the object? All static
+   members form one block, placed entirely before all instance members. This is absolute — e.g. a
+   `private static` method is placed above a `public` constructor, because scope outranks visibility.
+2. **Role — types → fields → (constructors →) methods.** This is a dependency order, not an arbitrary
+   bucket: nested types define the vocabulary that fields are declared with, fields hold the state that
+   methods/constructors operate on. So within the static block: nested static types → static fields →
+   static methods. Within the instance block: nested instance types → instance fields → constructors →
+   instance methods.
+3. **Visibility — `public` → `protected` → package-private → `private`.** Within one role (e.g. "instance
+   methods"), the public contract comes before implementation detail.
+
+So the full sequence in one class is: static nested types (public→private) → static fields
+(public→private) → static methods (public→private) → nested instance types (public→private) → instance
+fields (public→private) → constructors (public→private) → instance methods (public→private).
+
+## Naming
+
+A `Map`-typed field/parameter/local/getter/setter is named `<values>By<key>` (e.g. `Map<FileType, Boolean>
+selectionsByType`, `getSelectionsByType()`/`setSelectionsByType(...)`), not `<key><values>` (e.g.
+`typeSelections`). The `by`-form reads directly as "which value, keyed by which type of key" at the
+declaration site, without having to look at the generic type arguments to tell which side is the key.
+
+## Javadoc
+
+Document the contract — what the member does and why a caller would use it — never how it's implemented.
+If a sentence just narrates the method body in prose (the steps it performs, the fields it touches along
+the way), that's implementation detail the reader can already see by opening the method; cut it. A reader
+deciding whether/how to call the member should get what they need without opening its body: what it
+returns or does, plus any non-obvious constraint, side effect, or precondition — not a walkthrough.
+
+Target 120-240 characters for the main description (the summary sentence plus any `<p>` continuation)
+only — this range does not apply to `@param`/`@return`/`@throws`/`@see`/`{@link}` tags at all. Under 120
+characters a javadoc rarely earns its place over just reading the signature; over 240 it has usually
+drifted into narrating implementation or into a multi-paragraph essay — shorten it, or split the method
+instead of padding its doc further. Avoid `{@link}`/cross-references to other classes or methods where
+possible, especially to types from a different module/dependency (patternfx, shellfx, toolkit) — those
+references rot silently when the referenced API changes and are harder to notice/fix than one in the same
+file.
+
+Accessor methods (get, set, is, xxxProperty) — should not have Javadoc unless they provide information
+that is not obvious from the method name and type.
+
+Tags follow a different, simpler rule: keep each tag's description as short as it can be while still
+saying what it needs to; the only hard limit on it is the 120-char line length itself (wrap per the
+indentation rule below if one line isn't enough). There is no minimum length for a tag.
+
+**Tag coverage.** On `public`/`protected` methods, document every element that appears in the signature —
+each `@param`, every checked exception via `@throws`, and so on — as tersely as the 120-char line allows;
+a missing tag reads as an oversight on API surface other code depends on. Add `@return` only when the
+return value carries semantics beyond what the method name and return type already say — nullability, a
+sentinel/special value, which object state it reflects, resource ownership, mutability, a specific format,
+or a constraint on the value. Skip `@return` when it would just restate the method name and type (e.g.
+`getName()` returning `String` needs no `@return the name`).
+
+On package-private/private methods, add `@param`/`@throws`/etc. only when that specific tag is actually
+worth calling out (a non-obvious constraint, a surprising exception) — omitting the routine ones is fine.
+
+Each `@param`, `@return`, `@throws`, and similar tag starts on a new line. The first line holds the tag,
+the parameter name (if any), and the start of the description. When the description doesn't fit the
+120-char line limit, continue it on the following line(s) using a **fixed 4-space indent relative to the
+leading `*`**, not aligned under the start of the description — a fixed indent stays correct regardless of
+how long the tag/parameter name is, so it never needs re-indenting when a name changes length:
+
+```java
+/**
+ * Resolves a file.
+ *
+ * @param path controls whether the operation should be performed in a
+ *     lightweight mode. If {@code false}, additional validation is performed.
+ * @param destination specifies the destination used to resolve relative
+ *     paths and determine where the resulting files should be stored.
+ * @return the resolved file.
+ * @throws IOException if the file cannot be resolved.
+ */
+```
+
+Do not write javadoc on an overriding (`@Override`) method — rule of thumb: the comment belongs only on
+the interface method or the parent class method being overridden, not duplicated on every override.
+
+## Code style (Checkstyle)
+
+Checkstyle runs on every `mvn package`/`install` (see Build above) via the `com.techsenger.checkstyle.config`
+artifact (Sun checks-derived, `severity=error`) — a violation fails the build, not just a lint warning. Treat
+every rule below as binding when writing or editing Java. `module-info.java` files are exempt from all of it.
+Run just this check with `mvn checkstyle:check`, or skip it entirely with `-Dcheckstyle.plugin.skip=true`
+or `-P unit-tests`/`-P integration-tests`.
+
+- **Layout**: 120-char line limit, no tabs, no trailing whitespace, file must end with a newline, exactly
+  one blank line between the license header and the `package` declaration, no more than 5000 lines/file.
+- **Methods**: max 250 non-empty lines, max 8 parameters — both signal you should split the method/introduce
+  a parameter object rather than push past them.
+- **Imports**: no star imports, no unused imports, no redundant imports.
+- **Naming**: standard Java conventions — `PascalCase` types, `camelCase` methods/fields/params/locals,
+  `UPPER_SNAKE_CASE` for non-private constants (private constants are exempt, so `private static final` in
+  `camelCase`/mixed case is fine).
+- **Braces & blocks**: braces required on every `if`/`for`/`while`/etc. (no single-statement bodies without
+  `{}`), no empty blocks, no nested blocks, standard left/right-curly placement.
+- **Whitespace**: standard spacing around operators/generics/casts/parens (`GenericWhitespace`, `ParenPad`,
+  `TypecastParenPad`, `WhitespaceAround`, `WhitespaceAfter`, `NoWhitespaceBefore`/`After`, `OperatorWrap`).
+- **Coding**: no empty statements, `equals`/`hashCode` always overridden together, no assignments inside
+  expressions (`InnerAssignment`), one variable declaration per statement (no `int a, b;`), simplify boolean
+  expressions/returns (`return x == y;` not `if (x == y) return true; else return false;`).
+- **Class design**: a class with only private constructors must be `final`; utility classes (only static
+  members) must have a private constructor (matches the existing `private Foo() { // empty }` pattern
+  already used throughout, e.g. `NavigatorFileIconProvider`); fields should be `private` with accessors
+  (`VisibilityModifier`), not exposed directly.
+- **Misc**: array brackets on the type, not the variable (`String[] args`, not `String args[]`); long
+  literals use uppercase `L` (`100L`, not `100l`).
+- **No `TODO` comments** (`TodoComment` module) — since severity is `error`, a matching comment fails the
+  build. Don't add new ones; open a tracked issue or just do the work instead.

@@ -16,9 +16,6 @@
 
 package com.techsenger.patternfx.mvvm;
 
-import com.techsenger.patternfx.core.HistoryPolicy;
-import javafx.beans.property.ObjectProperty;
-
 /**
  *
  * @author Pavel Castornii
@@ -29,23 +26,6 @@ public interface ViewModel {
      * Returns the descriptor of the View.
      */
     Descriptor getDescriptor();
-
-    /**
-     * Returns the property for the history policy.
-     */
-    ObjectProperty<HistoryPolicy> historyPolicyProperty();
-
-    /**
-     * Returns the history policy.
-     */
-    HistoryPolicy getHistoryPolicy();
-
-    /**
-     * Sets the history policy to the specified value.
-     *
-     * @param policy the history policy to set.
-     */
-    void setHistoryPolicy(HistoryPolicy policy);
 
     /**
      * Requests the deinitialization of the View.

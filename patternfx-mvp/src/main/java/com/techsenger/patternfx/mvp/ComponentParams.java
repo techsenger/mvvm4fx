@@ -17,9 +17,7 @@
 package com.techsenger.patternfx.mvp;
 
 import com.techsenger.annotations.Nullable;
-import com.techsenger.patternfx.core.HistoryPolicy;
 import com.techsenger.patternfx.core.HistoryProvider;
-import java.util.Objects;
 
 /**
  *
@@ -27,17 +25,7 @@ import java.util.Objects;
  */
 public class ComponentParams {
 
-    private HistoryPolicy historyPolicy = HistoryPolicy.NONE;
-
     private @Nullable HistoryProvider<? extends ComponentHistory> historyProvider;
-
-    public HistoryPolicy getHistoryPolicy() {
-        return historyPolicy;
-    }
-
-    public void setHistoryPolicy(HistoryPolicy historyPolicy) {
-        this.historyPolicy = historyPolicy;
-    }
 
     public @Nullable HistoryProvider<? extends ComponentHistory> getHistoryProvider() {
         return historyProvider;
@@ -47,7 +35,9 @@ public class ComponentParams {
         this.historyProvider = historyProvider;
     }
 
-    protected void validate() {
-        Objects.requireNonNull(historyPolicy);
-    }
+    /**
+     * Validates the params. Called before the params are used to construct a {@link Presenter}. Subclasses adding
+     * their own required fields should override this method to validate them.
+     */
+    protected void validate() { }
 }

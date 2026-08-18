@@ -17,16 +17,9 @@
 package com.techsenger.patternfx.mvvm;
 
 import com.techsenger.annotations.Nullable;
-import com.techsenger.patternfx.core.HistoryPolicy;
-import static com.techsenger.patternfx.core.HistoryPolicy.ALL;
-import static com.techsenger.patternfx.core.HistoryPolicy.APPEARANCE;
-import static com.techsenger.patternfx.core.HistoryPolicy.DATA;
-import static com.techsenger.patternfx.core.HistoryPolicy.NONE;
 import com.techsenger.patternfx.core.HistoryProvider;
 import com.techsenger.toolkit.fx.value.ObservableSource;
 import com.techsenger.toolkit.fx.value.SimpleObservableSource;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,8 +35,6 @@ public abstract class AbstractViewModel implements ViewModel {
 
     private final ObservableSource<Void> requestDeinitialize = new SimpleObservableSource<>();
 
-    private final ObjectProperty<HistoryPolicy> historyPolicy = new SimpleObjectProperty<>(HistoryPolicy.NONE);
-
     private @Nullable HistoryProvider<? extends ComponentHistory> historyProvider;
 
     private @Nullable ComponentHistory history;
@@ -55,21 +46,6 @@ public abstract class AbstractViewModel implements ViewModel {
     @Override
     public Descriptor getDescriptor() {
         return descriptor;
-    }
-
-    @Override
-    public ObjectProperty<HistoryPolicy> historyPolicyProperty() {
-        return historyPolicy;
-    }
-
-    @Override
-    public HistoryPolicy getHistoryPolicy() {
-        return historyPolicy.get();
-    }
-
-    @Override
-    public void setHistoryPolicy(HistoryPolicy policy) {
-        historyPolicy.set(policy);
     }
 
     @Override
@@ -92,86 +68,39 @@ public abstract class AbstractViewModel implements ViewModel {
      * Initializes the view model.
      */
     protected void initialize() {
-        if (this.history != null) {
-            restoreHistory();
-        }
-    }
-
-    protected final void restoreHistory() {
-        var policy = getHistoryPolicy();
-        logger.debug("{} History policy during restore: {}", getDescriptor().getLogPrefix(), policy);
-        if (policy != NONE && history != null) {
-            if (history.isNew()) {
-                logger.debug("{} History is new. Skipping restoration", getDescriptor().getLogPrefix());
-            } else {
-                switch (policy) {
-                    case DATA -> restoreData();
-                    case APPEARANCE -> restoreAppearance();
-                    case ALL -> {
-                        restoreData();
-                        restoreAppearance();
-                    }
-                    default -> throw new AssertionError();
-                }
-            }
-        }
+        applyOrRestorePersistentState();
     }
 
     /**
-     * Method copies all data from history to view model. This method is called at the beginning of initialization
-     * when the policy is {@link HistoryPolicy#ALL} or {@link HistoryPolicy#DATA}.
+     * Applies default values for the view model's persistent state.
+     * <p>
+     * This method is invoked during initialization when no history is available or the available history is new.
+     * Implementations should assign meaningful default values to all state that will be persisted in history.
      */
-    protected void restoreData() { }
+    protected void applyPersistentState() { }
 
     /**
-     * Method copies all appearance information from history to view model. This method is called at the beginning
-     * of initialization when the policy is {@link HistoryPolicy#ALL} or {@link HistoryPolicy#APPEARANCE}.
+     * Restores the view model's persistent state from history.
+     * <p>
+     * This method is invoked during initialization when a non-new history is available, in place of
+     * {@link #applyPersistentState()}.
      */
-    protected void restoreAppearance() { }
+    protected void restorePersistentState() { }
 
     /**
      * Deinitializes the view model.
      */
     protected void deinitialize() {
-        if (this.history != null) {
-            saveHistory();
-        }
-    }
-
-    protected final void saveHistory() {
-        var policy = getHistoryPolicy();
-        logger.debug("{} History policy during save: {}", getDescriptor().getLogPrefix(), policy);
-        switch (policy) {
-            case DATA -> saveData();
-            case APPEARANCE -> saveAppearance();
-            case ALL -> {
-                saveData();
-                saveAppearance();
-            }
-            case NONE -> { }
-            default -> throw new AssertionError();
-        }
+        savePersistentStateToHistory();
     }
 
     /**
-     * Method copies all data from view model to history. This method is called at the beginning of deinitialization
-     * when the policy is {@link HistoryPolicy#ALL} or {@link HistoryPolicy#DATA}.
+     * Saves the view model's persistent state into history.
+     * <p>
+     * This method is invoked during deinitialization when history is available. Restoring and persisting the
+     * {@link ComponentHistory} instance itself is the responsibility of a history manager, not of this method.
      */
-    protected void saveData() {
-        if (this.history != null) {
-            this.history.setNew(false);
-        }
-    }
-
-    /**
-     * Method copies all data from view model to history. This method is called at the beginning of deinitialization
-     * when the policy is {@link HistoryPolicy#ALL} or {@link HistoryPolicy#APPEARANCE}.
-     */
-    protected void saveAppearance() {
-        if (this.history != null) {
-            this.history.setNew(false);
-        }
-    }
+    protected void savePersistentState() { }
 
     protected abstract Descriptor createDescriptor();
 
@@ -184,5 +113,54 @@ public abstract class AbstractViewModel implements ViewModel {
 
     ObservableSource<Void> getRequestDeinitialize() {
         return requestDeinitialize;
+    }
+
+    /**
+     * Resolves the view model's persistent state by either restoring it from history or applying default values when
+     * necessary.
+     * <p>
+     * The view model state is divided into two categories:
+     * <ul>
+     *     <li><b>Persistent state</b> — participates in the history mechanism and can be restored or saved across
+     *     component lifecycles.</li>
+     *     <li><b>Transient state</b> — does not participate in the history mechanism and exists only at runtime.</li>
+     * </ul>
+     * <p>
+     * This method operates exclusively on the <b>persistent state</b>. It does not initialize or modify transient data.
+     * If history is unavailable or new, defaults are applied via {@link #applyPersistentState()}; otherwise, the state
+     * is restored via {@link #restorePersistentState()}.
+     */
+    private void applyOrRestorePersistentState() {
+        if (history == null || history.isNew()) {
+            applyPersistentState();
+            logger.debug("{} Persistent state set to defaults. Reason: {}", getDescriptor().getLogPrefix(),
+                    history == null ? "history is null" : "history is new");
+        } else {
+            restorePersistentState();
+            logger.debug("{} Persistent state restored from history", getDescriptor().getLogPrefix());
+        }
+    }
+
+    /**
+     * Saves the current persistent state of the view model into its history, provided that history is available.
+     * <p>
+     * The view model state is conceptually divided into two categories:
+     * <ul>
+     *     <li><b>Persistent state</b> — data that is stored in and restored from history
+     *     (e.g., user input, UI state, configuration).</li>
+     *     <li><b>Transient state</b> — runtime-only data that is not persisted and
+     *     exists only for the duration of the component's lifecycle.</li>
+     * </ul>
+     * <p>
+     * This method operates exclusively on the <b>persistent state</b>. Transient state is not affected and must be
+     * managed independently.
+     */
+    private void savePersistentStateToHistory() {
+        if (this.history == null) {
+            return;
+        }
+        savePersistentState();
+        this.history.setNew(false);
+        logger.debug("{} Persistent state saved to history", getDescriptor().getLogPrefix());
     }
 }

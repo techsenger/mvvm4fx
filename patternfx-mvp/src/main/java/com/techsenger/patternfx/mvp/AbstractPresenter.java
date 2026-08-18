@@ -18,11 +18,6 @@ package com.techsenger.patternfx.mvp;
 
 import com.techsenger.annotations.Nullable;
 import com.techsenger.patternfx.core.ComponentState;
-import com.techsenger.patternfx.core.HistoryPolicy;
-import static com.techsenger.patternfx.core.HistoryPolicy.ALL;
-import static com.techsenger.patternfx.core.HistoryPolicy.APPEARANCE;
-import static com.techsenger.patternfx.core.HistoryPolicy.DATA;
-import static com.techsenger.patternfx.core.HistoryPolicy.NONE;
 import com.techsenger.patternfx.core.HistoryProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,8 +34,6 @@ public abstract class AbstractPresenter<V extends View> implements Presenter<V> 
 
     private final ComponentDescriptor descriptor;
 
-    private HistoryPolicy historyPolicy;
-
     private @Nullable HistoryProvider<? extends ComponentHistory> historyProvider;
 
     private @Nullable ComponentHistory history;
@@ -49,7 +42,6 @@ public abstract class AbstractPresenter<V extends View> implements Presenter<V> 
         params.validate();
         this.view = view;
         this.descriptor = createDescriptor();
-        this.historyPolicy = params.getHistoryPolicy();
         this.historyProvider = params.getHistoryProvider();
         if (this.view instanceof AbstractView<?>) {
             ((AbstractView<?>) this.view).setPresenter(this);
@@ -60,7 +52,6 @@ public abstract class AbstractPresenter<V extends View> implements Presenter<V> 
     public V getView() {
         return view;
     }
-
 
     @Override
     public final void initialize() {
@@ -75,7 +66,7 @@ public abstract class AbstractPresenter<V extends View> implements Presenter<V> 
             if (getView() instanceof AbstractView<?>) {
                 ((AbstractView<?>) getView()).initialize();
             }
-            applyOrRestoreHistory();
+            applyOrRestorePersistentState();
             descriptor.setState(ComponentState.INITIALIZED);
             logger.debug("{} Initialized the component", getDescriptor().getLogPrefix());
             // post-initialization
@@ -96,7 +87,7 @@ public abstract class AbstractPresenter<V extends View> implements Presenter<V> 
             preDeinitialize();
             // deinitialization
             descriptor.setState(ComponentState.DEINITIALIZING);
-            saveHistory();
+            savePersistentStateToHistory();
             if (getView() instanceof AbstractView<?>) {
                 ((AbstractView<?>) getView()).deinitialize();
             }
@@ -112,16 +103,6 @@ public abstract class AbstractPresenter<V extends View> implements Presenter<V> 
     @Override
     public ComponentDescriptor getDescriptor() {
         return descriptor;
-    }
-
-    @Override
-    public HistoryPolicy getHistoryPolicy() {
-        return historyPolicy;
-    }
-
-    @Override
-    public void setHistoryPolicy(HistoryPolicy policy) {
-        this.historyPolicy = policy;
     }
 
     /**
@@ -154,50 +135,28 @@ public abstract class AbstractPresenter<V extends View> implements Presenter<V> 
     }
 
     /**
-     * Applies default values for the component's persistent data.
+     * Applies default values for the component's persistent state.
      * <p>
-     * This method is invoked when no previously persisted data is available or when the current {@link HistoryPolicy}
-     * does not include {@code DATA}. Implementations should assign meaningful default values to all data that
-     * participates in the history mechanism.
+     * This method is invoked during initialization when no history is available or the available history is new.
+     * Implementations should assign meaningful default values to all state that will be persisted in history.
      */
-    protected void applyData() { }
+    protected void applyPersistentState() { }
 
     /**
-     * Applies default values for the component's persistent appearance state.
+     * Restores the component's persistent state from history.
      * <p>
-     * This method is invoked when no previously persisted appearance state is available or when the current
-     * {@link HistoryPolicy} does not include {@code APPEARANCE}. Implementations should initialize all
-     * appearance-related state that is managed through the history mechanism.
+     * This method is invoked during initialization when a non-new history is available, in place of
+     * {@link #applyPersistentState()}.
      */
-    protected void applyAppearance() { }
+    protected void restorePersistentState() { }
 
     /**
-     * Method copies all data from history to view. This method is called at the beginning of initialization
-     * when the policy is {@link HistoryPolicy#ALL} or {@link HistoryPolicy#DATA}.
-     *
+     * Saves the component's persistent state into history.
+     * <p>
+     * This method is invoked during deinitialization when history is available. Restoring and persisting the
+     * {@link ComponentHistory} instance itself is the responsibility of a history manager, not of this method.
      */
-    protected void restoreData() { }
-
-    /**
-     * Method copies all appearance information from history to view. This method is called at the beginning
-     * of initialization when the policy is {@link HistoryPolicy#ALL} or {@link HistoryPolicy#APPEARANCE}.
-     *
-     */
-    protected void restoreAppearance() { }
-
-    /**
-     * Method copies all data from view to history. This method is called at the beginning of deinitialization
-     * when the policy is {@link HistoryPolicy#ALL} or {@link HistoryPolicy#DATA}.
-     *
-     */
-    protected void saveData() { }
-
-    /**
-     * Method copies all data from view to history. This method is called at the beginning of deinitialization
-     * when the policy is {@link HistoryPolicy#ALL} or {@link HistoryPolicy#APPEARANCE}.
-     *
-     */
-    protected void saveAppearance() { }
+    protected void savePersistentState() { }
 
     protected abstract ComponentDescriptor createDescriptor();
 
@@ -220,48 +179,22 @@ public abstract class AbstractPresenter<V extends View> implements Presenter<V> 
      * </ul>
      * <p>
      * This method operates exclusively on the <b>persistent state</b>. It does not initialize or modify transient data.
-     * <p>
-     * Behavior depends on the {@link HistoryPolicy} and the state of the history:
-     * <ul>
-     *     <li>If history is new or unavailable, default values are applied via {@link #applyData()} and
-     *     {@link #applyAppearance()}.</li>
-     *     <li>If history exists, the state is selectively restored via {@link #restoreData()} and/or
-     *     {@link #restoreAppearance()}, while missing parts are filled with defaults.</li>
-     * </ul>
+     * If history is unavailable or new, defaults are applied via {@link #applyPersistentState()}; otherwise, the state
+     * is restored via {@link #restorePersistentState()}.
      */
-    private void applyOrRestoreHistory() {
-        logger.debug("{} History policy during initialization: {}", getDescriptor().getLogPrefix(), historyPolicy);
-        if (historyPolicy == NONE || history == null || history.isNew()) {
-            applyData();
-            applyAppearance();
-            logger.debug("{} Data and appearance set to defaults. Reason: {}", getDescriptor().getLogPrefix(),
-                    historyPolicy == NONE ? "policy is NONE" : history == null ? "history is null" : "history is new");
+    private void applyOrRestorePersistentState() {
+        if (history == null || history.isNew()) {
+            applyPersistentState();
+            logger.debug("{} Persistent state set to defaults. Reason: {}", getDescriptor().getLogPrefix(),
+                    history == null ? "history is null" : "history is new");
         } else {
-            switch (historyPolicy) {
-                case DATA -> {
-                    restoreData();
-                    applyAppearance();
-                    logger.debug("{} Data restored from history, appearance set to defaults",
-                            getDescriptor().getLogPrefix());
-                }
-                case APPEARANCE -> {
-                    applyData();
-                    restoreAppearance();
-                    logger.debug("{} Data set to defaults, appearance restored from history",
-                            getDescriptor().getLogPrefix());
-                }
-                case ALL -> {
-                    restoreData();
-                    restoreAppearance();
-                    logger.debug("{} Data and appearance restored from history", getDescriptor().getLogPrefix());
-                }
-                default -> throw new AssertionError();
-            }
+            restorePersistentState();
+            logger.debug("{} Persistent state restored from history", getDescriptor().getLogPrefix());
         }
     }
 
     /**
-     * Saves the current persistent state of the component into its history.
+     * Saves the current persistent state of the component into its history, provided that history is available.
      * <p>
      * The component state is conceptually divided into two categories:
      * <ul>
@@ -271,33 +204,15 @@ public abstract class AbstractPresenter<V extends View> implements Presenter<V> 
      *     exists only for the duration of the component's lifecycle.</li>
      * </ul>
      * <p>
-     * This method operates exclusively on the <b>persistent state</b>.  Transient state is not affected and must be
+     * This method operates exclusively on the <b>persistent state</b>. Transient state is not affected and must be
      * managed independently.
-     * <p>
-     * Depending on the {@link HistoryPolicy}, this method delegates to {@link #saveData()} and/or
-     * {@link #saveAppearance()}.
      */
-    private void saveHistory() {
+    private void savePersistentStateToHistory() {
         if (this.history == null) {
             return;
         }
-        logger.debug("{} History policy during deinitialization: {}", getDescriptor().getLogPrefix(), historyPolicy);
-        switch (historyPolicy) {
-            case DATA -> {
-                saveData();
-                this.history.setNew(false);
-            }
-            case APPEARANCE -> {
-                saveAppearance();
-                this.history.setNew(false);
-            }
-            case ALL -> {
-                saveData();
-                saveAppearance();
-                this.history.setNew(false);
-            }
-            case NONE -> { }
-            default -> throw new AssertionError();
-        }
+        savePersistentState();
+        this.history.setNew(false);
+        logger.debug("{} Persistent state saved to history", getDescriptor().getLogPrefix());
     }
 }

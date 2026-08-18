@@ -515,9 +515,18 @@ long-living, dynamic UI applications.
 instance is lazily provided via a `HistoryProvider` that is set before initialization. During the initialization phase,
 the provider’s `provide()` method is called to obtain the history. This allows the provider to be overridden in
 subclasses without retrieving a history instance, which may be an expensive operation. After the history is obtained,
-the provider is cleared (set to null), and the component uses the history. State restoration occurs in the
-deinitialization phase. The volume and type of state information that is restored and persisted are determined
-by the `HistoryPolicy` enum.
+the provider is cleared (set to null), and the component uses the history.
+
+The component itself does not decide whether a `History` instance should be persisted or restored across application
+runs — that responsibility belongs to an external history manager, which supplies (or withholds) the `HistoryProvider`.
+The component only reacts to what it is given: if no history is available, or the available history is new (that is,
+has never been saved), the component applies default persistent state via `applyPersistentState()`. Otherwise, it
+restores its persistent state from history via `restorePersistentState()`. Symmetrically, during deinitialization, if
+history is available, the component saves its persistent state into it via `savePersistentState()`.
+
+Component state is conceptually split into two categories: persistent state, which participates in the history
+mechanism and is handled by the three methods above, and transient state, which is runtime-only and must be managed
+independently.
 
 #### When to Create a Component? <a name="templates-component-when-to-create"></a>
 * The element has independent testable state or business logic that can exist without a `View`.
@@ -563,10 +572,12 @@ A component  consists of the following classes: a `View`, `FxView`, `Presenter`.
 always has a `Descriptor` (which is provided by the framework and normally does not require custom implementation)
 and may include `Params`, `Composer`, `Port` and a `History` classes.
 
-`Params` contains the initial parameter values required for component construction. Before use, the params are validated,
-and after the constructor completes, they are not retained. Using a `Params` object ensures that all required
-parameters are explicitly defined before initialization, preventing missing values at runtime. Additionally, `Params`
-is a convenient data container for passing information to the `Composer` when creating components.
+`Params` contains the initial parameter values required for component construction. Before use, the params are
+validated via the overridable `validate()` method, and after the constructor completes, they are not retained. Using
+a `Params` object ensures that all required parameters are explicitly defined before initialization, preventing
+missing values at runtime. Subclasses that introduce their own required fields should override `validate()` to
+validate them. Additionally, `Params` is a convenient data container for passing information to the `Composer` when
+creating components.
 
 `Port` is an interface implemented by a `Presenter` to enable explicit communication between presenters. A single
 `Presenter` may implement multiple distinct `Port`s.
