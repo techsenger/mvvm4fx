@@ -24,7 +24,7 @@ import com.techsenger.patternfx.mvp.ChildView;
  */
 public interface ReportView extends ChildView {
 
-    void setTotalPeople(String value);
+    void updateTotalPeople(String value);
 
-    void setAverageAge(String value);
+    void updateAverageAge(String value);
 }

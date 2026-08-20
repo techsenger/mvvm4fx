@@ -55,12 +55,12 @@ public class ReportFxView extends AbstractChildFxView<ReportPresenter> implement
     }
 
     @Override
-    public void setTotalPeople(String value) {
+    public void updateTotalPeople(String value) {
         totalPeopleValueLabel.textProperty().set(value);
     }
 
     @Override
-    public void setAverageAge(String value) {
+    public void updateAverageAge(String value) {
         averageAgeValueLabel.textProperty().set(value);
     }
 

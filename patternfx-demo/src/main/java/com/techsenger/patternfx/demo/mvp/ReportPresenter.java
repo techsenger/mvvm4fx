@@ -16,18 +16,24 @@
 
 package com.techsenger.patternfx.demo.mvp;
 
+import com.techsenger.annotations.Nullable;
 import com.techsenger.patternfx.demo.DemoNames;
 import com.techsenger.patternfx.demo.model.Person;
 import com.techsenger.patternfx.mvp.AbstractChildPresenter;
 import com.techsenger.patternfx.mvp.ComponentDescriptor;
 import com.techsenger.patternfx.mvp.ComponentParams;
 import java.util.List;
+import java.util.Objects;
 
 /**
  *
  * @author Pavel Castornii
  */
 public class ReportPresenter extends AbstractChildPresenter<ReportView> implements ReportPort {
+
+    private @Nullable String totalPeople;
+
+    private @Nullable String averageAge;
 
     public ReportPresenter(ReportView view, ComponentParams params) {
         super(view, params);
@@ -36,12 +42,36 @@ public class ReportPresenter extends AbstractChildPresenter<ReportView> implemen
     @Override
     public void refresh(List<Person> persons) {
         double average = persons.stream().mapToDouble(Person::getAge).average().orElse(0.0);
-        getView().setAverageAge(String.valueOf(average));
-        getView().setTotalPeople(String.valueOf(persons.size()));
+        setAverageAge(String.valueOf(average));
+        setTotalPeople(String.valueOf(persons.size()));
+    }
+
+    public @Nullable String getTotalPeople() {
+        return this.totalPeople;
+    }
+
+    public @Nullable String getAverageAge() {
+        return this.averageAge;
     }
 
     @Override
     protected ComponentDescriptor createDescriptor() {
         return new ComponentDescriptor(DemoNames.PERSON_REPORT);
+    }
+
+    protected void setTotalPeople(String totalPeople) {
+        if (Objects.equals(this.totalPeople, totalPeople)) {
+            return;
+        }
+        this.totalPeople = totalPeople;
+        getView().updateTotalPeople(totalPeople);
+    }
+
+    protected void setAverageAge(String averageAge) {
+        if (Objects.equals(this.averageAge, averageAge)) {
+            return;
+        }
+        this.averageAge = averageAge;
+        getView().updateAverageAge(averageAge);
     }
 }

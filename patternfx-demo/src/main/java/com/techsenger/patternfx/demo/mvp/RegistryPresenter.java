@@ -37,9 +37,21 @@ public class RegistryPresenter<V extends RegistryView> extends AbstractParentPre
 
     private int selectedIndex;
 
+    private boolean removeDisabled = true;
+
+    private boolean reportShown;
+
     public RegistryPresenter(V view, RegistryParams params) {
         super(view, params);
         this.service = params.getService();
+    }
+
+    public boolean isRemoveDisabled() {
+        return this.removeDisabled;
+    }
+
+    public boolean isReportShown() {
+        return this.reportShown;
     }
 
     @Override
@@ -48,7 +60,8 @@ public class RegistryPresenter<V extends RegistryView> extends AbstractParentPre
     }
 
     protected void onSelectedChanged(int value) {
-        getView().setRemoveDisabled(value < 0);
+        setRemoveDisabled(value < 0);
+        this.selectedIndex = value;
     }
 
     protected void onAdd() {
@@ -59,7 +72,7 @@ public class RegistryPresenter<V extends RegistryView> extends AbstractParentPre
             service.save(newPerson);
             persons.add(newPerson);
             getView().addPersons(List.of(newPerson));
-            updateReport();
+            refreshReport();
         }
     }
 
@@ -72,7 +85,7 @@ public class RegistryPresenter<V extends RegistryView> extends AbstractParentPre
         service.delete(person.getId());
         persons.remove(selectedIndex);
         getView().removePerson(selectedIndex);
-        updateReport();
+        refreshReport();
     }
 
     protected void onRefresh() {
@@ -80,18 +93,18 @@ public class RegistryPresenter<V extends RegistryView> extends AbstractParentPre
         getView().clearPersons();
         this.persons.addAll(service.readAll());
         getView().addPersons(this.persons);
-        updateReport();
+        refreshReport();
     }
 
     protected void onReport() {
         var composer = getView().getComposer();
         if (composer.getReport() == null) {
             composer.showReport();
-            updateReport();
-            getView().setReportShown(true);
+            refreshReport();
+            setReportShown(true);
         } else {
             composer.hideReport();
-            getView().setReportShown(false);
+            setReportShown(false);
         }
     }
 
@@ -102,14 +115,30 @@ public class RegistryPresenter<V extends RegistryView> extends AbstractParentPre
     @Override
     protected void postInitialize() {
         super.postInitialize();
-        getView().showStage();
+        getView().show();
         onRefresh();
     }
 
-    private void updateReport() {
+    private void refreshReport() {
         var report = getView().getComposer().getReport();
         if (report != null) {
             report.refresh(persons);
         }
+    }
+
+    private void setRemoveDisabled(boolean removeDisabled) {
+        if (this.removeDisabled == removeDisabled) {
+            return;
+        }
+        this.removeDisabled = removeDisabled;
+        getView().updateRemoveDisabled(removeDisabled);
+    }
+
+    private void setReportShown(boolean reportShown) {
+        if (this.reportShown == reportShown) {
+            return;
+        }
+        this.reportShown = reportShown;
+        getView().updateReportShown(reportShown);
     }
 }

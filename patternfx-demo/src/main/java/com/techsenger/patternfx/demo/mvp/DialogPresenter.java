@@ -38,6 +38,12 @@ public class DialogPresenter<V extends DialogView> extends AbstractParentPresent
 
     private @Nullable Person result;
 
+    private boolean firstNameValid = true;
+
+    private boolean lastNameValid = true;
+
+    private boolean ageValid = true;
+
     public DialogPresenter(V view, ComponentParams params) {
         super(view, params);
     }
@@ -45,6 +51,18 @@ public class DialogPresenter<V extends DialogView> extends AbstractParentPresent
     @Override
     public @Nullable Person getResult() {
         return this.result;
+    }
+
+    public boolean isFirstNameValid() {
+        return this.firstNameValid;
+    }
+
+    public boolean isLastNameValid() {
+        return this.lastNameValid;
+    }
+
+    public boolean isAgeValid() {
+        return this.ageValid;
     }
 
     @Override
@@ -74,16 +92,35 @@ public class DialogPresenter<V extends DialogView> extends AbstractParentPresent
         }
     }
 
-    private boolean checkIfValid(Person person) {
-        var v = getView();
+    protected void setFirstNameValid(boolean firstNameValid) {
+        if (this.firstNameValid == firstNameValid) {
+            return;
+        }
+        this.firstNameValid = firstNameValid;
+        getView().updateFirstNameValid(firstNameValid);
+    }
 
-        var firstNameValid = PersonValidator.isFirstNameValid(person.getFirstName());
-        v.setFirstNameValid(firstNameValid);
-        var lastNameValid = PersonValidator.isLastNameValid(person.getLastName());
-        v.setLastNameValid(lastNameValid);
-        var ageValid = PersonValidator.isAgeValid(person.getAge());
-        v.setAgeValid(ageValid);
-        return firstNameValid && lastNameValid && ageValid;
+    protected void setLastNameValid(boolean lastNameValid) {
+        if (this.lastNameValid == lastNameValid) {
+            return;
+        }
+        this.lastNameValid = lastNameValid;
+        getView().updateLastNameValid(lastNameValid);
+    }
+
+    protected void setAgeValid(boolean ageValid) {
+        if (this.ageValid == ageValid) {
+            return;
+        }
+        this.ageValid = ageValid;
+        getView().updateAgeValid(ageValid);
+    }
+
+    private boolean checkIfValid(Person person) {
+        setFirstNameValid(PersonValidator.isFirstNameValid(person.getFirstName()));
+        setLastNameValid(PersonValidator.isLastNameValid(person.getLastName()));
+        setAgeValid(PersonValidator.isAgeValid(person.getAge()));
+        return isFirstNameValid() && isLastNameValid() && isAgeValid();
     }
 
 }

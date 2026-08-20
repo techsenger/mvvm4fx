@@ -114,12 +114,12 @@ public class RegistryFxView<P extends RegistryPresenter<?>> extends AbstractPare
     }
 
     @Override
-    public void setRemoveDisabled(boolean v) {
+    public void updateRemoveDisabled(boolean v) {
         this.removeButton.setDisable(v);
     }
 
     @Override
-    public void setReportShown(boolean value) {
+    public void updateReportShown(boolean value) {
         if (value) {
             reportButton.setText("Hide Report");
         } else {
@@ -128,7 +128,7 @@ public class RegistryFxView<P extends RegistryPresenter<?>> extends AbstractPare
     }
 
     @Override
-    public void showStage() {
+    public void show() {
         this.stage.show();
     }
 
@@ -182,8 +182,8 @@ public class RegistryFxView<P extends RegistryPresenter<?>> extends AbstractPare
 
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        setReportShown(false);
-        setRemoveDisabled(true);
+        updateReportShown(false);
+        updateRemoveDisabled(true);
 
         stage.setTitle("PatternFX - MVP");
         stage.setScene(new Scene(root, 800, 500));

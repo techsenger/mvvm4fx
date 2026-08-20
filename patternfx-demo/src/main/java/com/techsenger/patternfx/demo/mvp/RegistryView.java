@@ -41,11 +41,11 @@ public interface RegistryView extends ParentView {
     @Override
     Composer getComposer();
 
-    void setRemoveDisabled(boolean value);
+    void updateRemoveDisabled(boolean value);
 
-    void setReportShown(boolean value);
+    void updateReportShown(boolean value);
 
-    void showStage();
+    void show();
 
     void addPersons(List<Person> persons);
 

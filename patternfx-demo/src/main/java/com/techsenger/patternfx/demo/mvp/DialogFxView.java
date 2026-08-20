@@ -69,17 +69,17 @@ public class DialogFxView extends AbstractParentFxView<DialogPresenter<?>> imple
     }
 
     @Override
-    public void setFirstNameValid(boolean value) {
+    public void updateFirstNameValid(boolean value) {
         updateValid(firstNameTextField, value);
     }
 
     @Override
-    public void setLastNameValid(boolean value) {
+    public void updateLastNameValid(boolean value) {
         updateValid(lastNameTextField, value);
     }
 
     @Override
-    public void setAgeValid(boolean value) {
+    public void updateAgeValid(boolean value) {
         updateValid(ageTextField, value);
     }
 
