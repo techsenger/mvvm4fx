@@ -12,6 +12,16 @@ comparisons, when to create a component, complete worked examples) lives in `REA
 non-trivial design changes to `patternfx-mvp` or `patternfx-mvvm`, since the class responsibilities are only
 fully explained there.
 
+## Scope of work
+
+It is strictly forbidden to operate outside the project directory. This applies absolutely, to every kind
+of operation — including read-only ones like `find` or search/grep — not just edits.
+
+The only exception: the developer may explicitly name a directory outside the project directory for a
+specific task. In that case, work must stay confined to the project directory plus exactly the
+directory/directories the developer named — nothing else. Proactively suggesting or using any other
+outside directory on your own is strictly forbidden.
+
 ## Module Layout
 
 Reactor build with four Maven modules (Java 25 / JavaFX 25, uses the Java module system):
