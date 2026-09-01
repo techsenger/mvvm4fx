@@ -17,11 +17,9 @@
 package com.techsenger.patternfx.demo.mvvm;
 
 import com.techsenger.annotations.Nullable;
-import com.techsenger.patternfx.demo.DemoNames;
 import com.techsenger.patternfx.demo.model.Person;
 import com.techsenger.patternfx.demo.model.PersonValidator;
 import com.techsenger.patternfx.mvvm.AbstractViewModel;
-import com.techsenger.patternfx.mvvm.Descriptor;
 import java.util.function.Consumer;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
@@ -90,11 +88,6 @@ public class DialogViewModel extends AbstractViewModel {
 
     public ObjectProperty<Integer> ageProperty() {
         return age;
-    }
-
-    @Override
-    protected Descriptor createDescriptor() {
-        return new Descriptor(DemoNames.PERSON_DIALOG);
     }
 
     StringProperty titleProperty() {

@@ -16,11 +16,9 @@
 
 package com.techsenger.patternfx.demo.mvp;
 
-import com.techsenger.patternfx.demo.DemoNames;
 import com.techsenger.patternfx.demo.model.Person;
 import com.techsenger.patternfx.demo.model.PersonService;
 import com.techsenger.patternfx.mvp.AbstractParentPresenter;
-import com.techsenger.patternfx.mvp.ComponentDescriptor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -52,11 +50,6 @@ public class RegistryPresenter<V extends RegistryView> extends AbstractParentPre
 
     public boolean isReportShown() {
         return this.reportShown;
-    }
-
-    @Override
-    protected ComponentDescriptor createDescriptor() {
-        return new ComponentDescriptor(DemoNames.PERSON_REGISTRY);
     }
 
     protected void onSelectedChanged(int value) {

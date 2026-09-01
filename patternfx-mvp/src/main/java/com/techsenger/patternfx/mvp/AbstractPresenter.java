@@ -18,6 +18,7 @@ package com.techsenger.patternfx.mvp;
 
 import com.techsenger.annotations.Nullable;
 import com.techsenger.patternfx.core.ComponentState;
+import com.techsenger.patternfx.core.DefaultComponentName;
 import com.techsenger.patternfx.core.HistoryProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -158,7 +159,17 @@ public abstract class AbstractPresenter<V extends View> implements Presenter<V> 
      */
     protected void savePersistentState() { }
 
-    protected abstract ComponentDescriptor createDescriptor();
+    /**
+     * Creates this component's descriptor. Defaults to the concrete class's simple name with a trailing
+     * "Presenter" stripped, if present &mdash; the descriptor identifies the whole component (view included,
+     * e.g. in log messages the view itself emits), not just its presenter half.
+     */
+    protected ComponentDescriptor createDescriptor() {
+        var simpleName = getClass().getSimpleName();
+        var name = simpleName.endsWith("Presenter")
+                ? simpleName.substring(0, simpleName.length() - "Presenter".length()) : simpleName;
+        return new ComponentDescriptor(new DefaultComponentName(name));
+    }
 
     private void prepareHistory() {
         if (this.historyProvider != null) {

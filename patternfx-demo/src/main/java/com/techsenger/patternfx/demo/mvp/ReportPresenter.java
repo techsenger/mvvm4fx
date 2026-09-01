@@ -17,10 +17,8 @@
 package com.techsenger.patternfx.demo.mvp;
 
 import com.techsenger.annotations.Nullable;
-import com.techsenger.patternfx.demo.DemoNames;
 import com.techsenger.patternfx.demo.model.Person;
 import com.techsenger.patternfx.mvp.AbstractChildPresenter;
-import com.techsenger.patternfx.mvp.ComponentDescriptor;
 import com.techsenger.patternfx.mvp.ComponentParams;
 import java.util.List;
 import java.util.Objects;
@@ -52,11 +50,6 @@ public class ReportPresenter extends AbstractChildPresenter<ReportView> implemen
 
     public @Nullable String getAverageAge() {
         return this.averageAge;
-    }
-
-    @Override
-    protected ComponentDescriptor createDescriptor() {
-        return new ComponentDescriptor(DemoNames.PERSON_REPORT);
     }
 
     protected void setTotalPeople(String totalPeople) {

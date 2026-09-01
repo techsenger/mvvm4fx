@@ -18,11 +18,9 @@ package com.techsenger.patternfx.demo.mvvm;
 
 import com.techsenger.annotations.Nullable;
 import com.techsenger.patternfx.core.ComponentState;
-import com.techsenger.patternfx.demo.DemoNames;
 import com.techsenger.patternfx.demo.model.Person;
 import com.techsenger.patternfx.demo.model.PersonService;
 import com.techsenger.patternfx.mvvm.AbstractParentViewModel;
-import com.techsenger.patternfx.mvvm.Descriptor;
 import java.util.Iterator;
 import java.util.Objects;
 import javafx.beans.property.BooleanProperty;
@@ -83,11 +81,6 @@ public class RegistryViewModel extends AbstractParentViewModel<RegistryComposer>
             }
         });
         updateReportButtonText(false);
-    }
-
-    @Override
-    protected Descriptor createDescriptor() {
-        return new Descriptor(DemoNames.PERSON_REGISTRY);
     }
 
     ObservableList<Person> getPersons() {

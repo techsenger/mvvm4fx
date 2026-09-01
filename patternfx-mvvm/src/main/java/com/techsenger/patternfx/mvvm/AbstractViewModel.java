@@ -17,6 +17,7 @@
 package com.techsenger.patternfx.mvvm;
 
 import com.techsenger.annotations.Nullable;
+import com.techsenger.patternfx.core.DefaultComponentName;
 import com.techsenger.patternfx.core.HistoryProvider;
 import com.techsenger.toolkit.fx.value.ObservableSource;
 import com.techsenger.toolkit.fx.value.SimpleObservableSource;
@@ -102,7 +103,17 @@ public abstract class AbstractViewModel implements ViewModel {
      */
     protected void savePersistentState() { }
 
-    protected abstract Descriptor createDescriptor();
+    /**
+     * Creates this view model's descriptor. Defaults to the concrete class's simple name with a trailing
+     * "ViewModel" stripped, if present &mdash; the descriptor identifies the whole component (view included,
+     * e.g. in log messages the view itself emits), not just its view model half.
+     */
+    protected Descriptor createDescriptor() {
+        var simpleName = getClass().getSimpleName();
+        var name = simpleName.endsWith("ViewModel")
+                ? simpleName.substring(0, simpleName.length() - "ViewModel".length()) : simpleName;
+        return new Descriptor(new DefaultComponentName(name));
+    }
 
     void prepareHistory() {
         if (this.historyProvider != null) {

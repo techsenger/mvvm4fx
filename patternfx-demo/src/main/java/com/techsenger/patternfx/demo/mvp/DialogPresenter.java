@@ -17,11 +17,9 @@
 package com.techsenger.patternfx.demo.mvp;
 
 import com.techsenger.annotations.Nullable;
-import com.techsenger.patternfx.demo.DemoNames;
 import com.techsenger.patternfx.demo.model.Person;
 import com.techsenger.patternfx.demo.model.PersonValidator;
 import com.techsenger.patternfx.mvp.AbstractParentPresenter;
-import com.techsenger.patternfx.mvp.ComponentDescriptor;
 import com.techsenger.patternfx.mvp.ComponentParams;
 
 /**
@@ -63,11 +61,6 @@ public class DialogPresenter<V extends DialogView> extends AbstractParentPresent
 
     public boolean isAgeValid() {
         return this.ageValid;
-    }
-
-    @Override
-    protected ComponentDescriptor createDescriptor() {
-        return new ComponentDescriptor(DemoNames.PERSON_DIALOG);
     }
 
     protected void onFirstNameChanged(String value) {
@@ -122,5 +115,4 @@ public class DialogPresenter<V extends DialogView> extends AbstractParentPresent
         setAgeValid(PersonValidator.isAgeValid(person.getAge()));
         return isFirstNameValid() && isLastNameValid() && isAgeValid();
     }
-
 }

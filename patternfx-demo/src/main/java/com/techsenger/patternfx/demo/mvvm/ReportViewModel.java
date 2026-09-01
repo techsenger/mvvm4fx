@@ -16,11 +16,9 @@
 
 package com.techsenger.patternfx.demo.mvvm;
 
-import com.techsenger.patternfx.demo.DemoNames;
 import com.techsenger.patternfx.demo.model.Person;
 import com.techsenger.patternfx.mvvm.AbstractChildViewModel;
 import com.techsenger.patternfx.mvvm.Composer;
-import com.techsenger.patternfx.mvvm.Descriptor;
 import java.util.List;
 import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.beans.property.ReadOnlyDoubleWrapper;
@@ -55,11 +53,6 @@ public class ReportViewModel extends AbstractChildViewModel<Composer> {
 
     public double getAverageAge() {
         return averageAge.get();
-    }
-
-    @Override
-    protected Descriptor createDescriptor() {
-        return new Descriptor(DemoNames.PERSON_REPORT);
     }
 
     void setTotalPeople(int value) {

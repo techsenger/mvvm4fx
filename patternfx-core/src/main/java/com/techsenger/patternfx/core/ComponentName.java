@@ -17,14 +17,14 @@
 package com.techsenger.patternfx.core;
 
 /**
- * Represents a logical name of a component.
+ * An opaque, human-readable label identifying a component or a slot it exposes &mdash; not a substitute for the
+ * component's actual Java type, and not a guarantee of any particular equality contract of its own: this
+ * interface declares no {@code equals()}/{@code hashCode()}, so that is entirely up to whichever concrete
+ * implementation is used.
  *
- * <p>A {@code ComponentName} defines the type identity of a component within the platform. It is typically declared
- * in the public API so that other components can reference it, even when the actual implementation classes are
- * located in internal or deeply nested packages.
- *
- * <p>Each component has exactly one {@code ComponentName}, which serves as a symbolic identifier shared between its
- * elements. Component names are usually defined as constants within interfaces representing the module's public API.
+ * <p>A component's name is one, shared across every element that makes it up &mdash; its presenter (or view
+ * model) and its view alike &mdash; since together they form a single logical component, not the identity of
+ * whichever one of those classes happens to hold the descriptor.
  *
  * @author Pavel Castornii
  */

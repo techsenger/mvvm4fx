@@ -17,6 +17,7 @@
 package com.techsenger.patternfx.core;
 
 import com.techsenger.annotations.Nullable;
+import java.util.Objects;
 
 /**
  *
@@ -38,6 +39,32 @@ public abstract class AbstractName implements Name {
     @Override
     public @Nullable String getText() {
         return text;
+    }
+
+    /**
+     * Two names are equal when they are instances of the exact same concrete class and carry the same
+     * {@link #getText()} &mdash; e.g. a {@code ComponentName} and a {@code MenuGroupName} with identical text
+     * are never equal, since they identify different kinds of slots. Names are compared by value (not just
+     * reference) so that a registry keyed by name matches a freshly-constructed name carrying the same text as
+     * an already-registered constant, rather than silently missing it.
+     */
+    // Intentional getClass() check: distinct concrete subtypes (e.g. ComponentName vs. MenuGroupName) must
+    // never be equal even with identical text, which an instanceof-based equals would incorrectly allow.
+    @Override
+    @SuppressWarnings("EqualsGetClass")
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        return Objects.equals(text, ((AbstractName) obj).text);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getClass(), text);
     }
 
     @Override
