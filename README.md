@@ -572,12 +572,16 @@ A component  consists of the following classes: a `View`, `FxView`, `Presenter`.
 always has a `Descriptor` (which is provided by the framework and normally does not require custom implementation)
 and may include `Params`, `Composer`, `Port` and a `History` classes.
 
-`Params` contains the initial parameter values required for component construction. Before use, the params are
-validated via the overridable `validate()` method, and after the constructor completes, they are not retained. Using
-a `Params` object ensures that all required parameters are explicitly defined before initialization, preventing
-missing values at runtime. Subclasses that introduce their own required fields should override `validate()` to
-validate them. Additionally, `Params` is a convenient data container for passing information to the `Composer` when
-creating components.
+`Params` contains the initial parameter values required to bring a component into existence — construction and
+initialization are the two real steps of that, so a `Presenter` may retain its `Params` (typically as its own field)
+across both: through the constructor and through its `initialize()` call, most commonly to read a value it only
+needs once, during `preInitialize()`/`postInitialize()`. Once `initialize()` returns, the `Presenter` is fully
+synchronized with its `View` and no longer needs its construction-time input, so `Params` must not be retained
+beyond that point. Before use, the params are validated via the overridable `validate()` method. Using a `Params`
+object ensures that all required parameters are explicitly defined before initialization, preventing missing values
+at runtime. Subclasses that introduce their own required fields should override `validate()` to validate them.
+Additionally, `Params` is a convenient data container for passing information to the `Composer` when creating
+components.
 
 `Port` is an interface implemented by a `Presenter` to enable explicit communication between presenters. A single
 `Presenter` may implement multiple distinct `Port`s.
